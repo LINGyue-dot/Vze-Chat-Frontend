@@ -1,25 +1,49 @@
+/*
+ * @Author: qianlong github:https://github.com/LINGyue-dot
+ * @Date: 2021-10-26 19:46:19
+ * @LastEditors: qianlong github:https://github.com/LINGyue-dot
+ * @LastEditTime: 2021-10-26 21:27:45
+ * @Description: 
+ */
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [
+
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    redirect: '/home',
+    component: () => import('@/layout/base-layout.vue'),
+    children: [
+      {
+        path: '/login',
+        component: () => import('@/views/login/index.vue')
+      },
+      {
+        path: '/home',
+        component: () => import('@/views/home/index.vue')
+      },
+      {
+        path: '/chat',
+        component: () => import('@/views/chat/index.vue')
+      },
+      {
+        path: '/meeting',
+        component: () => import('@/views/meeting/index.vue')
+      }
+    ]
   },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+
+
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  next()
+
 })
 
 export default router
