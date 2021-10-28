@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 20:29:04
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-10-27 19:09:31
+ * @LastEditTime: 2021-10-28 23:58:46
  * @Description:
  */
 
@@ -38,7 +38,6 @@ class WS {
     this._incomingOnmessage = configFn.onmessage
     this._incomingOnerror = configFn.onerror
     //
-
   }
 
 

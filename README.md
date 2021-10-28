@@ -1,24 +1,26 @@
-# vze-chat-frontend
 
-## Project setup
-```
-yarn install
-```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
 
-### Compiles and minifies for production
-```
-yarn build
-```
 
-### Lints and fixes files
-```
-yarn lint
-```
+# Frontend
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+心跳逻辑
+
+wss 启动一个定时器，每隔 3s 向每个 client ping ，并启动一个摧毁的定时器，4s 内没有收到 pong 就将这个 client 摧毁
+
+
+
+
+
+### 断线重连
+
+客户端发送心跳包给服务端，服务端每接收到心跳包之后重新开始摧毁该连接的倒计时
+
+如何判断是否断线：
+
+客户端：发送两个心跳包后当要发送第三个心跳包时候发现还没收到（此时服务端出现问题）或者客户端无法发送心跳包（客户端网络出现问题）那么就断线
+
+服务端：由于长时间没有接收到心跳包所有就摧毁该连接（客户端或者服务端问题）
+
+极端情况：如果客户端断线的一瞬间正好断网导致心跳包无法发送，客户端会尝试使用这个旧的连接如果可用的话就直接使用，如果不可用就尝试去创建一个新的连接。（服务端为主体即客户端需要断开连接时候需要等待服务端，等待服务端的连接不可用时候才可以重新连接）
+
