@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 20:29:10
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-10-27 08:48:57
+ * @LastEditTime: 2021-10-30 17:03:30
  * @Description:
  */
 
@@ -14,7 +14,10 @@ export enum MessageType {
   // 新用户加入或者其他通知
   SYSTEM = 'SYSTEM',
   // 其他用户的消息
-  USER = 'USER'
+  USER = 'USER',
+  // 心跳包
+  PING = 'PING',
+  PONG = 'PONG'
 }
 
 export interface UserProp {

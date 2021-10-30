@@ -2,10 +2,11 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 19:46:19
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-10-27 09:25:08
+ * @LastEditTime: 2021-10-30 16:49:13
  * @Description: 
  */
 import { addWs } from '@/api/http'
+import WS from '@/websocket'
 import { UserProp } from '@/websocket/type'
 import { createStore, Module } from 'vuex'
 
@@ -13,7 +14,7 @@ export interface StateProp {
   login: boolean,
   username: string | undefined,
   id: string | undefined,
-  ws: WebSocket | undefined
+  ws: WS | undefined
 }
 
 
@@ -41,9 +42,10 @@ const store = createStore<StateProp>({
     [Types.CHANGE_ID](state, payload: string) {
       state.id = payload
     },
-    [Types.CHANGE_WS](state, payload: WebSocket | undefined) {
+    [Types.CHANGE_WS](state, payload: WS | undefined) {
       state.ws = payload
     }
+
   },
   actions: {
     // login

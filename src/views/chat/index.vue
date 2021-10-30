@@ -68,6 +68,10 @@ const send = () => {
   sendMessage.value = "";
 };
 
+const closeWs = () => {
+  store.state.ws?.closeWs();
+};
+
 onMounted(() => {
   boostrap();
 });
