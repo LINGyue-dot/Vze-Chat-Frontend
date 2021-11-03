@@ -129,6 +129,10 @@ ICE 候选人：（优先级从上到下）
 
 
 
+## 会议一对多模式代理在服务器还是在本地
+
+
+
 ## 连接流程
 
 * 本质上是客户端与客户端之间连接
@@ -155,6 +159,19 @@ navigator.mediaDevices
 
 * 借助信令服务器来进行媒体协商
 * 利用 ICE 中的 STUN TURN 来实现 NAT 穿越
+
+假设 offer 发送他的数据流给 answer 显示
+
+1.  offer 获取本地设备数据流并创建 `RTCPeerConnection` 
+2. offer 将数据流通过 peer 连接传输
+3. offer 通过 socket 发送其候选人信息
+4. offer 通过 socket 发送 peer 连接生成的 `offer` 信息
+5. answer 接收 offer 的 offer 之后通过 `setRemoteDescription` 设置 peer 的 `remoteDescription` 属性即 远程的 sdp 信息
+6. answer 调用 `createAnswer` 设置为 `localDEscription` 即自身的 sdp 并发送 `answer` 给服务器
+7. offer 接收到 `answer` 之后设置对方的 `sdp` 信息
+8.  webrtc 连接已经建立，但是双方还不能通信，因为 ICE 还没处理，通信双方还没确定最优的连接方式
+9. answer 接收到 ICE 数据时候，调用 `RTCPeerConnection` 的 `addIceCandidate`
+10. offer 收到 answer 的 ICE 数据时候，同上调用方法进行连接
 
 
 
@@ -229,4 +246,12 @@ import io from "socket.io-client";
 
 * https://juejin.cn/post/6896045087659130894
 * https://www.cnblogs.com/ssyfj/p/14791064.html#%E4%B8%80nat%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B ：NAT 详解
+* https://juejin.cn/post/6844903624561147918
 
+
+
+
+
+# temp
+
+* 媒体协商具体是如何做的

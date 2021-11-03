@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 19:46:19
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-10-26 21:27:45
+ * @LastEditTime: 2021-11-03 20:40:46
  * @Description: 
  */
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
@@ -29,6 +29,14 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/meeting',
         component: () => import('@/views/meeting/index.vue')
+      },
+      {
+        path: '/offer',
+        component: () => import('@/views/meeting/offer.vue')
+      },
+      {
+        path: '/answer',
+        component: () => import('@/views/meeting/answer.vue')
       }
     ]
   },
