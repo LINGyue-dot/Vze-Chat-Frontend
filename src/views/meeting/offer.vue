@@ -1,20 +1,29 @@
 <template>
 	<div class="offer-container">
 		<video ref="offerRef"></video>
-		<button @click="beginTransport"></button>
+		<button @click="beginTransport">begin</button>
 	</div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import socket from "@/webrtc";
-import { AnyNsRecord } from "dns";
+import initSocket from "@/webrtc";
+import { Socket } from "socket.io-client";
 const offerRef = ref<HTMLVideoElement | null>(null);
 
-const beginTransport = () => {
-	createStream();
+const socket = ref<Socket>();
 
+const beginTransport = async () => {
+	document.title = "offer";
+	socket.value = await initSocket();
+	// 先建立 client 与 server socket 通信再进行下面逻辑
+	socket.value.on("room-ok", () => {
+		console.log("offer-room ok");
+		createStream();
+	});
+	// createStream();
 	// 监听获取 answer
-	socket.on("answer", afterGetAnswer);
+	socket.value.on("answer", afterGetAnswer);
+	socket.value.on("answer-candidate", afterGetAnswerCandidate);
 };
 
 // 发起方
@@ -31,6 +40,11 @@ const offerPeer = ref<RTCPeerConnection>();
 const hanleSuccess = (stream: MediaStream) => {
 	if (offerRef.value) {
 		offerRef.value.srcObject = stream;
+	}
+	if (offerRef.value) {
+		offerRef.value.onloadedmetadata = () => {
+			offerRef.value?.play();
+		};
 	}
 	offerPeer.value = new RTCPeerConnection();
 	// polyfill  update from addStream to addTrack correctly?
@@ -53,13 +67,13 @@ const hanleSuccess = (stream: MediaStream) => {
 	});
 };
 
-const sendCandidate = (msg: RTCIceCandidate) => {
-	socket.emit("candidate", msg);
+const sendCandidate = (candidate: RTCIceCandidate) => {
+	socket.value?.emit("offer-candidate", candidate);
 };
 
 const sendOffer = () => {
-	socket.emit("offer", offerPeer.value?.localDescription);
-	// RTCSessionDescriptionInit 与 RTCSessionDescriptio 基本一致
+	socket.value?.emit("offer", offerPeer.value?.localDescription);
+	// RTCSessionDescriptionInit 与 RTCSessionDescriptio type 基本一致
 };
 
 // 获取到 answer 的 answer
@@ -68,6 +82,10 @@ const afterGetAnswer = (sdp: RTCSessionDescriptionInit) => {
 	offerPeer.value?.setRemoteDescription(desc).then(() => {
 		console.log("peer connection success");
 	});
+};
+//
+const afterGetAnswerCandidate = (ice: RTCIceCandidateInit) => {
+	offerPeer.value?.addIceCandidate(new RTCIceCandidate(ice));
 };
 </script>
 <style scoped>

@@ -173,7 +173,7 @@ navigator.mediaDevices
 9. answer 接收到 ICE 数据时候，调用 `RTCPeerConnection` 的 `addIceCandidate`
 10. offer 收到 answer 的 ICE 数据时候，同上调用方法进行连接
 
-
+![6cb372db929540878425bc8026e102b0_tplv-k3u1fbpfcp-watermark](http://120.27.242.14:9900/uploads/upload_fefbe031b05c6bdbcaa38adf96f904c7.png)
 
 ## 几个主要的 api
 
