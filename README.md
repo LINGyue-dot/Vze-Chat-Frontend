@@ -95,10 +95,6 @@ ICE 候选人：（优先级从上到下）
 
 通信图
 
-![89242eaf31074c1c88ad0ac91b093d2e_tplv-k3u1fbpfcp-watermark (1)](http://120.27.242.14:9900/uploads/upload_eb0dd4c918f31561135b296c82cef4fd.PNG)
-
-
-
 
 
 ## 媒体协商
@@ -173,6 +169,12 @@ navigator.mediaDevices
 9. answer 接收到 ICE 数据时候，调用 `RTCPeerConnection` 的 `addIceCandidate`
 10. offer 收到 answer 的 ICE 数据时候，同上调用方法进行连接
 
+
+
+本质上就是 sdp 信息交换（包括 nat 之后的 ip 信息）和 ice 候选人信息交换（选择通信的线路）
+
+
+
 ![6cb372db929540878425bc8026e102b0_tplv-k3u1fbpfcp-watermark](http://120.27.242.14:9900/uploads/upload_fefbe031b05c6bdbcaa38adf96f904c7.png)
 
 ## 几个主要的 api
@@ -182,6 +184,13 @@ navigator.mediaDevices
 * RTCDataChannel ：数据通信
 
 
+
+
+
+## P2P 连接
+
+* 利用 `socket.io` `socket.io-client` 通过信令服务器进行交互数据
+* 连接流程即如上，直接使用默认自动生成的 ICE 配置
 
 
 
@@ -240,17 +249,147 @@ import io from "socket.io-client";
 
 
 
+# 前端开发
+
+## Websocket
+
+* 添加单点一对一处理逻辑
+* 
+
+
+
+
+
+
+
+# 部分组件设计
+
+
+
+## 下拉刷新上拉加载更多
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 需求分析和数据库设计
+
+
+
+## 需求分析
+
+
+
+### IM WS 即时通讯
+
+* 即时通讯
+* 多人群、单一聊天
+* @ 功能
+* 联系人功能
+* 获取历史消息（这里不实现已读）（虚拟列表渲染）
+* 群文件功能
+
+
+
+
+
+## 数据库设计
+
+
+
+### IM WS 即时通讯
+
+#### 表结构设计
+
+```sql
+
+create table user
+(
+    user_id   BIGINT primary key,
+    user_name VARCHAR(20) NOT NULL,
+    user_img  TEXT
+);
+
+#  联系人表
+create table user_contacter
+(
+    user_id      BIGINT,
+    contacter_id BIGINT,
+    foreign key (user_id) references user (user_id),
+    foreign key (contacter_id) references user (user_id)
+);
+
+# 用户与联系人的聊天记录
+create table user_contacter_message
+(
+    user_id      bigint,
+    contacter_id bigint,
+    send_time    datetime,
+    message      TEXT,
+    foreign key (user_id) references user (user_id),
+    foreign key (contacter_id) references user (user_id)
+);
+
+# 群
+create table block
+(
+    block_id   int primary key,
+    block_name VARCHAR(20) NOT NULL
+);
+
+# 群和用户表
+create table block_user
+(
+    block_id int,
+    user_id  BIGINT,
+    foreign key (block_id) references block (block_id),
+    foreign key (user_id) references user (user_id)
+);
+
+# 群消息
+create table block_message
+(
+    block_message_id int primary key,
+    block_id         int,
+    user_id          bigint,
+    at_user_id       bigint,
+    message          TEXT,
+    send_time        datetime,
+    foreign key (block_id) references block (block_id),
+    foreign key (user_id) references user (user_id),
+    foreign key (at_user_id) references user (user_id)
+);
+```
+
+#### 视图创建
+
+
+
+#### sql 语句书写
+
+
+
+
+
 
 
 # Refrence
 
 * https://juejin.cn/post/6896045087659130894
-* https://www.cnblogs.com/ssyfj/p/14791064.html#%E4%B8%80nat%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B ：NAT 详解
+* [NAT 详解](https://www.cnblogs.com/ssyfj/p/14791064.html#%E4%B8%80nat%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B)
 * https://juejin.cn/post/6844903624561147918
-
-
-
-
+* https://juejin.cn/post/6964571538729205773
+* https://socket.io
+* https://zhuanlan.zhihu.com/p/63662433
+* .....
 
 # temp
 
