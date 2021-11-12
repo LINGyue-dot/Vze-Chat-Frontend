@@ -21,7 +21,7 @@ const router = useRouter();
 const name = ref();
 const login = () => {
 	store.dispatch("login", name.value).then(() => {
-		router.push("/chat");
+		router.push("/home");
 	});
 };
 </script>

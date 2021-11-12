@@ -1,13 +1,12 @@
 <template>
 	<div style="height: 100%; width: 190px">
-		<DoubleColumn left-name="会话" rigth-name="联系人">
-			<template #left>hello</template>
-			<template #right>hello</template>
-		</DoubleColumn>
+		<a-button type="primary" @click="router.push('/chat')">websocket</a-button>
+		<a-button type="primary" @click="router.push('/offer')">webrtc</a-button>
 	</div>
 </template>
 <script lang="ts" setup>
-import DoubleColumn from "@/components/double-column/index.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 </script>
 <style scoped>
 .item {

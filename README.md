@@ -6,12 +6,6 @@
 
 
 
-心跳逻辑
-
-wss 启动一个定时器，每隔 3s 向每个 client ping ，并启动一个摧毁的定时器，4s 内没有收到 pong 就将这个 client 摧毁
-
-
-
 ### 心跳包发送
 
 为什么需要发心跳包？
@@ -249,7 +243,39 @@ import io from "socket.io-client";
 
 
 
+
+
+
+
+
+
+# IM 开发
+
+
+
+## 消息 id 如何生成
+
+im 开发需要保证消息的一致性以及有序性，那么 id 的选取就十分重要。由于本项目中没有采用分布式，所以直接使用一个自增的整形 id 来保障即可。为了保证 id 的唯一性，id 存在 redis 中。
+
+每次用户输入消息按下 enter 时候，先从后端获取消息 id （ ws 通讯），后再将数据发送给后端
+
+
+
+
+
 # 前端开发
+
+
+
+
+
+## 登录逻辑
+
+* 如果存在则返回数据，如果不存在则注册并返回数据（注册需要查三次表）
+
+
+
+
 
 ## Websocket
 
@@ -260,13 +286,21 @@ import io from "socket.io-client";
 
 
 
+## websocket 发送消息
+
+* 前端想后端请求一个 message id ，那么然后乐观更新，后端全部广播，当前端再次收到说明已经发出去了
+* 如果前端再次收到的 id 不一样或者此时断线了那么就报错
 
 
-# 部分组件设计
 
 
 
-## 下拉刷新上拉加载更多
+# 页面与组件设计
+
+![image-20211112004934036](http://120.27.242.14:9900/uploads/upload_978616b73e48df2fa44803b758c8a764.png)
+
+* 就一个 spa ，三栏布局，并且三栏的组件分别独立，利用 vuex 控制显示与否
+* 聊天组件如果当前状态为空那么就将其不显示
 
 
 
@@ -303,6 +337,18 @@ import io from "socket.io-client";
 
 ## 数据库设计
 
+### id / 主码生成
+
+```
+user_id bigint 时间戳
+```
+
+
+
+
+
+
+
 
 
 ### IM WS 即时通讯
@@ -310,63 +356,89 @@ import io from "socket.io-client";
 #### 表结构设计
 
 ```sql
+use vze_db
 
 create table user
 (
-    user_id   BIGINT primary key,
-    user_name VARCHAR(20) NOT NULL,
-    user_img  TEXT
+    user_id   int primary key auto_increment,
+    user_name VARCHAR(20) NOT NULL default 'suger',
+    user_img  VARCHAR(1000)        default 'http://qianlon.cn/upload/2021/11/image-c571dd25ab744ff0a954fae2cfe5b61a.png'
 );
 
-#  联系人表
+# 用户与联系人关联表
 create table user_contacter
 (
-    user_id      BIGINT,
-    contacter_id BIGINT,
+    user_id      int,
+    contacter_id int,
     foreign key (user_id) references user (user_id),
     foreign key (contacter_id) references user (user_id)
 );
 
-# 用户与联系人的聊天记录
 create table user_contacter_message
 (
-    user_id      bigint,
-    contacter_id bigint,
-    send_time    datetime,
-    message      TEXT,
+    contacter_message_id int primary key auto_increment,
+    user_id              int,
+    contacter_id         int,
+    message              TEXT,
+    send_time            timestamp not null default current_timestamp,
     foreign key (user_id) references user (user_id),
     foreign key (contacter_id) references user (user_id)
 );
-
 # 群
 create table block
 (
-    block_id   int primary key,
-    block_name VARCHAR(20) NOT NULL
+    block_id   int primary key auto_increment,
+    block_name VARCHAR(30) NOT NULL,
+    owner_id   int default 1,
+    foreign key (owner_id) references user (user_id)
 );
 
 # 群和用户表
 create table block_user
 (
     block_id int,
-    user_id  BIGINT,
+    user_id  int,
     foreign key (block_id) references block (block_id),
     foreign key (user_id) references user (user_id)
 );
 
+
 # 群消息
 create table block_message
 (
-    block_message_id int primary key,
+    block_message_id int primary key auto_increment,
     block_id         int,
-    user_id          bigint,
-    at_user_id       bigint,
+    user_id          int,
+    at_user_id       int,
     message          TEXT,
-    send_time        datetime,
+    send_time        timestamp not null default current_timestamp comment '创建时间',
     foreign key (block_id) references block (block_id),
     foreign key (user_id) references user (user_id),
     foreign key (at_user_id) references user (user_id)
 );
+
+# mock
+insert into user (user_name)
+values ('千泷');
+insert into user (user_name)
+values ('小千');
+insert into user (user_name)
+values ('小泷');
+
+insert into user_contacter value (2, 3);
+
+select *
+from user;
+
+insert into block (block_name, owner_id)
+values ('Vze 家族', 1);
+
+insert into block_user
+values (1, 1);
+insert into block_user
+values (1, 2);
+insert into block_user
+values (1, 3);
 ```
 
 #### 视图创建
@@ -378,6 +450,15 @@ create table block_message
 
 
 
+
+
+
+
+
+# 部分未实现
+
+* 时间块的显示，即如何设计
+* websokcet 连接验证身份
 
 
 
@@ -394,3 +475,182 @@ create table block_message
 # temp
 
 * 媒体协商具体是如何做的
+
+
+
+
+
+* 后端只传 user_id ，
+* 开始前端获取所有联系人数据并存储他的基础信息（ user_id user_name user_img ）到 vuex 中
+* 开始前端获取会话中所有群的消息( block_id block_name block_img ) 到  vuex 中
+* p2p 时候后端只传 user_id 前端自己通过 user_id 来进行通知
+* 每次点开群聊时候，前端获取群内所有的用户信息 ( user_id user_name user_img ) 并将其存储到 vuex 中
+* 群聊时候后端传 user_id block_id 前端自己通过这俩进行渲染通知
+
+
+
+* 所有联系人数据并存储他的基础信息（ user_id user_name user_img ）到 vuex 中
+* vuex 
+
+
+
+* 
+
+* 收到的数据传入 vuex 中，在页面中监听 vuex 中数据即可
+
+
+
+* 会话列表如何显示（大部分本地读取）（存储在 redis 中）
+
+
+
+```js
+/*
+ * @Author: qianlong github:https://github.com/LINGyue-dot
+ * @Date: 2021-10-26 20:29:04
+ * @LastEditors: qianlong github:https://github.com/LINGyue-dot
+ * @LastEditTime: 2021-11-09 12:05:23
+ * @Description:
+ */
+
+export const WS_API = "ws://localhost:7000";
+
+import { MessageProp, MessageType, WsOptions } from "./type";
+import store from "@/store";
+
+class WS {
+  private _websocket: WebSocket | undefined;
+
+  private _incomingOnmessage: undefined | ((data: MessageProp) => void);
+  private _incomingOnopen: undefined | (() => void);
+  private _incomingOnerror: undefined | ((e: Error) => void);
+
+  private _connectSuccess: undefined | (() => void);
+  private _connectFail: undefined | ((str: string) => void);
+
+  // heartbeat
+  private _noResponseTime: Number = 0;
+
+  private _heartTimeout: NodeJS.Timeout | undefined;
+  // 存储配置信息，为了断线重连摧毁原链接建立新的 ws 使用
+  private _wsUrl: string | undefined;
+  private _wsConfigFn: WsOptions | undefined;
+
+  constructor(url: string, configFn: WsOptions) {
+    this._wsUrl = url;
+    this._wsConfigFn = configFn;
+    this._init();
+  }
+
+  private _init() {
+    if (!this._wsUrl || !this._wsConfigFn) {
+      return;
+    }
+    this.closeWs();
+    this._noResponseTime = 0;
+
+    // init websocket
+    this._websocket = new WebSocket(this._wsUrl);
+    // attention 'this' pointer
+    this._websocket.onopen = this._onopen.bind(this);
+    this._websocket.onmessage = this._onmessage.bind(this);
+    //
+    this._connectSuccess = this._wsConfigFn.connectSuccess;
+    this._connectFail = this._wsConfigFn.connectFail;
+    //
+    this._incomingOnopen = this._wsConfigFn.onopen;
+    this._incomingOnmessage = this._wsConfigFn.onmessage;
+    this._incomingOnerror = this._wsConfigFn.onerror;
+  }
+
+  private _onopen() {
+    this._incomingOnopen && this._incomingOnopen();
+    this._sendInitData();
+  }
+
+  private _onmessage(evt: MessageEvent<WebSocket>) {
+    const data = JSON.parse(evt.data as unknown as string) as MessageProp;
+
+    // 清空掉心跳包记录，有返回数据说明该连接还可以用
+    this._noResponseTime = 0;
+
+    switch (data.type) {
+      case MessageType.PONG:
+        break;
+      case MessageType.SYSTEM:
+        // 新用户加入 ws
+        break;
+      case MessageType.MESSAGE:
+        // 消息处理
+        break;
+
+      default:
+        break;
+    }
+
+    if (data.type !== MessageType.PONG) {
+      // show all message from server about oneself or others
+      this._incomingOnmessage && this._incomingOnmessage(data);
+    } else {
+      // to debug
+    }
+  }
+
+  // 发送心跳包逻辑
+  private _handleSendPing() {
+    // 发送的时候开始下次心跳包发送的倒计时
+    if (this._heartTimeout) {
+      clearTimeout(this._heartTimeout);
+    }
+    this._heartTimeout = setTimeout(() => {
+      //
+      // 如果上一次的心跳包没有响应，则摧毁此链接，创建新的连接
+      if (this._noResponseTime >= 1) {
+        this._init();
+      }
+      this.send("ping", MessageType.PING);
+    }, 5 * 1000);
+  }
+
+  private _sendInitData() {
+    this.send("join", MessageType.INIT);
+  }
+
+  // send message to server
+  private _send(data: MessageProp) {
+    try {
+      // websocket 断开
+      if (this._websocket?.readyState === 3) {
+        this._init();
+        return;
+      }
+
+      this._websocket?.send(Buffer.from(JSON.stringify(data)));
+    } catch (e) {
+      console.log("108");
+      console.error(e);
+    }
+  }
+
+  public closeWs() {
+    this._websocket?.close();
+  }
+
+  // universal send fucntion for outer
+  public send(msg: string, type?: MessageType) {
+    this._handleSendPing();
+
+    const tempData: MessageProp = {
+      user_name: store.state.user_name || "",
+      user_id: store.state.user_id || "",
+      type: type || MessageType.USER,
+      message: msg,
+    };
+    this._send(tempData);
+  }
+}
+
+export default WS;
+
+```
+
