@@ -2,11 +2,11 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-11-12 10:57:02
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-12 11:36:07
+ * @LastEditTime: 2021-11-12 12:10:28
  * @Description: 当前 active 的部分状态属性
  */
 
-import { BlockMessageProp, ContacterMessageProp } from "@/websocket/type";
+import { BlockMessageProp, BlockProp, ContacterMessageProp, ContacterProp } from "@/websocket/type";
 import { Module, Mutation } from "vuex";
 
 // 最左侧菜单栏选择
@@ -17,7 +17,7 @@ export enum TabProp {
 
 // 中间会话栏列表 item
 // v-for 中的 id 用 'b'+block_id or 'c'+contacter_id
-export type ConversationProp = (BlockMessageProp | ContacterMessageProp) & {
+export type ConversationProp = (BlockProp | ContacterProp) & {
   is_block: boolean;
   notice_num: number;
   // TODO 最后消息以及时间
@@ -65,6 +65,7 @@ const ActiveStoreModel: ActiveStoreType = {
   mutations: {
     switchTab(state, payload: TabProp) {
       state.tab = payload;
+      console.log('68 active', payload)
     },
     addConversationList(state, payload: ConversationProp | ConversationProp[]) {
       if (Array.isArray(payload)) {
