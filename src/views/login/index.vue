@@ -10,17 +10,16 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { StateProp } from "@/store";
+import { PermissionStateType } from "@/store/permission";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-
-const store = useStore<StateProp>();
+const store = useStore<{permission:PermissionStateType}>();
 const router = useRouter();
 
 const name = ref();
 const login = () => {
-	store.dispatch("login", name.value).then(() => {
+	store.dispatch('permission/login', name.value).then(() => {
 		router.push("/home");
 	});
 };

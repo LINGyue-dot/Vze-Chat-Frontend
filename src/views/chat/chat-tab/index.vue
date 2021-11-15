@@ -1,29 +1,37 @@
 <template>
 	<div class="chat-tab-container">
-		<img class="owner-img" :src="store.state.user_img" alt="" />
+		<img
+			class="owner-img"
+			:src="permissionStore.state.permission.user_img || deafultAvatar"
+			alt=""
+		/>
 		<div
 			class="tab-icon"
 			:class="{
-				'tab-icon-active': activeStore.state.active.tab === TabProp.Contacter,
+				'tab-icon-active':
+					activeStore.state.active.activeTab === TabProp.Contacter,
 			}"
-			@click="store.commit(ActiveTypes.SWITCHTAB, TabProp.Contacter)"
+			@click="activeStore.commit(ActiveTypes.SWITCHTAB, TabProp.Contacter)"
 		></div>
 		<div
 			class="tab-icon"
 			:class="{
 				'tab-icon-active':
-					activeStore.state.active.tab === TabProp.Conversation,
+					activeStore.state.active.activeTab === TabProp.Conversation,
 			}"
-			@click="store.commit(ActiveTypes.SWITCHTAB, TabProp.Conversation)"
+			@click="
+				permissionStore.commit(ActiveTypes.SWITCHTAB, TabProp.Conversation)
+			"
 		></div>
 	</div>
 </template>
 <script lang="ts" setup>
-import { StateProp } from "@/store";
 import { ActiveStateProp, ActiveTypes, TabProp } from "@/store/active";
+import { PermissionStateType } from "@/store/permission";
 import { useStore } from "vuex";
-ActiveTypes.SWITCHTAB;
-const store = useStore<StateProp>();
+import { deafultAvatar } from "@/utils/config";
+
+const permissionStore = useStore<{ permission: PermissionStateType }>();
 
 const activeStore = useStore<{ active: ActiveStateProp }>();
 </script>

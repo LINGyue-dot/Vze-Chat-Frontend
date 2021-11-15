@@ -2,12 +2,13 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-11-12 10:57:02
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-12 12:10:28
+ * @LastEditTime: 2021-11-15 00:03:25
  * @Description: 当前 active 的部分状态属性
+ * 存 active tab , active conversation_id ,active block_id || contacter_id
  */
 
-import { BlockMessageProp, BlockProp, ContacterMessageProp, ContacterProp } from "@/websocket/type";
-import { Module, Mutation } from "vuex";
+import { BlockProp, ContacterProp } from "@/websocket/type";
+import { Action, Module, Mutation } from "vuex";
 
 // 最左侧菜单栏选择
 export enum TabProp {
@@ -15,24 +16,11 @@ export enum TabProp {
   Contacter = "Contacter",
 }
 
-// 中间会话栏列表 item
-// v-for 中的 id 用 'b'+block_id or 'c'+contacter_id
-export type ConversationProp = (BlockProp | ContacterProp) & {
-  is_block: boolean;
-  notice_num: number;
-  // TODO 最后消息以及时间
-  last_time?: string;
-  last_message?: string;
-};
-
-// 当前 active 的会话选择
-export type ActiveConversation = ConversationProp | undefined;
-
-//
+// 
 export interface ActiveStateProp {
-  tab: TabProp;
-  conversationList: ConversationProp[];
-  activeconversation: ActiveConversation;
+  activeTab: TabProp;
+  activeConversationId: string | undefined;
+  activeChat: BlockProp | ContacterProp | undefined;
 }
 
 export interface ActiveStoreType
@@ -42,42 +30,37 @@ export interface ActiveStoreType
   state: ActiveStateProp;
   mutations: {
     switchTab: Mutation<ActiveStateProp>;
-    addConversationList: Mutation<ActiveStateProp>;
     changeActiveConversation: Mutation<ActiveStateProp>;
-  };
+  }
 }
 export const ActiveTypes = {
   SWITCHTAB: "active/switchTab",
-  ADDCONVERSATIONLIST: "active/addConversationList",
   CHANGEACTIVECONVERSATION: "active/changeActiveConversation",
 };
 
 const initState: ActiveStateProp = {
-  tab: TabProp.Conversation,
-  conversationList: [],
-  activeconversation: undefined,
+  activeTab: TabProp.Conversation,
+  activeConversationId: undefined,
+  activeChat: undefined
 };
 
-const ActiveStoreModel: ActiveStoreType = {
+const ActiveStore: ActiveStoreType = {
   namespaced: true,
   name: "active",
   state: initState,
   mutations: {
     switchTab(state, payload: TabProp) {
-      state.tab = payload;
+      state.activeTab = payload;
       console.log('68 active', payload)
     },
-    addConversationList(state, payload: ConversationProp | ConversationProp[]) {
-      if (Array.isArray(payload)) {
-        state.conversationList = [...state.conversationList, ...payload];
-      } else {
-        state.conversationList = [...state.conversationList, payload];
-      }
+    changeActiveConversation(state, payload: {
+      activeConversationId: string;
+      activeChat: BlockProp | ContacterProp | undefined
+    }) {
+      state.activeConversationId = payload.activeConversationId;
+      state.activeChat = payload.activeChat
     },
-    changeActiveConversation(state, payload) {
-      state.activeconversation = payload;
-    },
-  },
+  }
 };
 
-export default ActiveStoreModel;
+export default ActiveStore;

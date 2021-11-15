@@ -12,9 +12,22 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import ChatTab from "./chat-tab.vue";
-import ChatRoom from "./chat-room.vue";
-import ConversationList from "./conversation-list.vue";
+import ChatTab from "./chat-tab/index.vue";
+import ChatRoom from "./chat-room/index.vue";
+import ConversationList from "./conversation-list/index.vue";
+import { useStore } from "vuex";
+import { onMounted } from "@vue/runtime-core";
+import { initWs } from "@/websocket";
+import { nextTick } from "process";
+
+const store = useStore();
+
+onMounted(() => {
+	store.dispatch("conversation/getConversation");
+});
+nextTick(() => {
+	initWs();
+});
 </script>
 <style scoped>
 .chat-container {
@@ -33,7 +46,7 @@ import ConversationList from "./conversation-list.vue";
 .contacter-list {
 	width: 200px;
 	height: 100%;
-	background-color: #aaa;
+	background-color: #f7f7f7;
 }
 .chat-room {
 	flex: 1;

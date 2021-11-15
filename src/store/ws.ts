@@ -1,9 +1,8 @@
 import {
-  BlockMessageProp,
+  BlockMessageStoreProp,
   BlockProp,
-  ContacterMessageProp,
+  ContacterMessageStoreProp,
   ContacterProp,
-  UserProp,
   WSFnsProp,
 } from "@/websocket/type";
 import { Module, Mutation } from "vuex";
@@ -19,9 +18,9 @@ import { Module, Mutation } from "vuex";
 export interface WSStateType extends WSFnsProp {
   wsInstance: WebSocket | undefined;
   conatcterList: ContacterProp[]; // 联系人列表
-  conatcterMessageList: ContacterMessageProp[]; // 来自联系人的消息
+  conatcterMessageList: ContacterMessageStoreProp[]; // 来自联系人的消息
   blockList: BlockProp[]; // 群列表
-  blockMessageList: BlockMessageProp[]; // 来自群的消息
+  blockMessageList: BlockMessageStoreProp[]; // 来自群的消息
 }
 
 export interface WSStoreType extends Module<WSStateType, WSStateType> {
@@ -66,13 +65,13 @@ const WSStoreModel: WSStoreType = {
     changeBlockList(state, payload: BlockProp[]) {
       state.blockList = payload;
     },
-    changeBlockMessageList(state, payload: BlockMessageProp[]) {
+    changeBlockMessageList(state, payload: BlockMessageStoreProp[]) {
       state.blockMessageList = payload;
     },
     changeContacterList(state, payload: ContacterProp[]) {
       state.conatcterList = payload;
     },
-    changeContacterMessageList(state, payload: ContacterMessageProp[]) {
+    changeContacterMessageList(state, payload: ContacterMessageStoreProp[]) {
       state.conatcterMessageList = payload;
     },
     initWSFns(state, payload: WSFnsProp) {

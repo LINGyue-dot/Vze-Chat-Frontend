@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 21:11:25
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-12 11:47:32
+ * @LastEditTime: 2021-11-15 00:57:13
  * @Description: fetch get data from backend
  */
 import qs from "qs";
@@ -33,7 +33,6 @@ export const http = async (
   } else {
     config.body = JSON.stringify(data || {});
   }
-
   return fetch(`${baseUrl}${endpoint}`, config).then((response: any) =>
     response.json()
   );

@@ -2,23 +2,25 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-11-11 20:36:45
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-12 00:16:43
+ * @LastEditTime: 2021-11-15 15:46:57
  * @Description: 处理信息
  */
 
-import { Types, WSStateType } from "@/store/ws";
+import { WSTypes, WSStateType } from "@/store/ws";
 import { useStore } from "vuex";
 import { initWs } from ".";
 import { heartbaet } from "./heartbeat";
 import {
   BlockMessageProp,
+  BlockMessageStoreProp,
   ChatType,
-  ContacterMessageProp,
+  ContacterMessageStoreProp,
   MessageProp,
   MessageType,
+  P2PMessageProp,
 } from "./type";
 
-const store = useStore<WSStateType>();
+const wsStore = useStore<{ ws: WSStateType }>();
 
 // 处理收到的消息
 export function handleMessage(ev: MessageEvent<WebSocket>) {
@@ -34,11 +36,11 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
     case MessageType.MESSAGE:
       // 消息推送
       //
-      if (data.chat_type === ChatType.PTP) {
-        hanlePTP(data);
+      if ((data as P2PMessageProp).chat_type === ChatType.PTP) {
+        hanlePTP(data as P2PMessageProp);
       }
-      if (data.chat_type === ChatType.BLOCK) {
-        hanleBlock(data);
+      if ((data as BlockMessageProp).chat_type === ChatType.BLOCK) {
+        hanleBlock(data as BlockMessageProp);
       }
       break;
     case MessageType.CLOSE:
@@ -52,41 +54,41 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
 export function sendMessage(msg: MessageProp) {
   try {
     // ws 断开
-    if (store.state.wsInstance?.readyState === 3) {
+    if (wsStore.state.ws.wsInstance?.readyState === 3) {
       initWs();
       return;
     }
     // TODO send fail
-    store.state.wsInstance?.send(Buffer.from(JSON.stringify(msg)));
+    wsStore.state.ws.wsInstance?.send(Buffer.from(JSON.stringify(msg)));
   } catch (e) {
     console.error(e);
   }
 }
 
 //
-function hanlePTP(message: MessageProp) {
-  let tempContacterMessage: ContacterMessageProp = {
+function hanlePTP(message: P2PMessageProp) {
+  let tempContacterMessage: ContacterMessageStoreProp = {
     user_id: message.from_user_id,
     message: message.message,
     message_id: message.message_id,
   };
-  store.commit(Types.CHANGECONTACTERMESSAGELIST, [
-    ...store.state.conatcterMessageList,
+  wsStore.commit(WSTypes.CHANGECONTACTERMESSAGELIST, [
+    ...wsStore.state.ws.conatcterMessageList,
     tempContacterMessage,
   ]);
 }
 
 //
-function hanleBlock(message: MessageProp) {
-  let tempBlockMessage: BlockMessageProp = {
-    block_id: message.block_id || "1",
-    message_id: message.message_id || "1",
+function hanleBlock(message: BlockMessageProp) {
+  let tempBlockMessage: BlockMessageStoreProp = {
+    block_id: message.block_id,
+    message_id: message.message_id,
     from_user_id: message.from_user_id,
     at_user_id: message.at_user_id,
     message: message.message,
   };
-  store.commit(Types.CHANGEBLOCKMESSAGELIST, [
-    ...store.state.blockMessageList,
+  wsStore.commit(WSTypes.CHANGEBLOCKMESSAGELIST, [
+    ...wsStore.state.ws.blockMessageList,
     tempBlockMessage,
   ]);
 }
