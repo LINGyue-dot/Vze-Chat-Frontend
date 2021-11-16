@@ -2,15 +2,17 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-11-11 20:36:45
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-15 15:46:57
+ * @LastEditTime: 2021-11-15 16:50:42
  * @Description: 处理信息
  */
 
+import store from "@/store";
 import { WSTypes, WSStateType } from "@/store/ws";
 import { useStore } from "vuex";
 import { initWs } from ".";
-import { heartbaet } from "./heartbeat";
+import { heartbaet, zeroNoResponseTime } from "./heartbeat";
 import {
+  BaseMessageProp,
   BlockMessageProp,
   BlockMessageStoreProp,
   ChatType,
@@ -18,18 +20,22 @@ import {
   MessageProp,
   MessageType,
   P2PMessageProp,
+  SendMessageProp,
 } from "./type";
 
-const wsStore = useStore<{ ws: WSStateType }>();
+// const wsStore = useStore<{ ws: WSStateType }>();
+const wsStore = store;
 
 // 处理收到的消息
 export function handleMessage(ev: MessageEvent<WebSocket>) {
-  // 每次收到服务器发来的消息就重新开始心跳计时
-  heartbaet();
-
   const data = JSON.parse(ev.data as unknown as string) as MessageProp;
-
+  // 只要一收到服务端的消息就将未响应的包数置零
+  zeroNoResponseTime();
   switch (data.type) {
+    case MessageType.PONG:
+      console.log("pong");
+      break;
+
     case MessageType.SYSTEM:
       // 新用户登录
       break;
@@ -50,19 +56,27 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
       break;
   }
 }
-
-export function sendMessage(msg: MessageProp) {
+// 原子操作发送消息
+function sendMessage(msg: MessageProp) {
   try {
     // ws 断开
     if (wsStore.state.ws.wsInstance?.readyState === 3) {
       initWs();
       return;
     }
-    // TODO send fail
     wsStore.state.ws.wsInstance?.send(Buffer.from(JSON.stringify(msg)));
   } catch (e) {
     console.error(e);
   }
+}
+// 发送 PING 消息
+export function sendPingMsg(msg: MessageProp) {
+  console.log("ping");
+  sendMessage(msg);
+}
+// 发送用户实体信息
+export function sendUserMessage(msg: SendMessageProp) {
+  sendMessage(msg);
 }
 
 //

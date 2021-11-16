@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 20:29:10
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-15 15:47:18
+ * @LastEditTime: 2021-11-15 17:11:34
  * @Description:
  */
 
@@ -18,6 +18,8 @@ export enum MessageType {
   // 心跳包
   PING = "PING",
   PONG = "PONG",
+  // 确认消息
+  CONFIRM = "CONFIRM",
 }
 
 // 聊天类型
@@ -31,7 +33,7 @@ export interface BaseMessageProp {
   type: MessageType; // 区分类型字段
   from_user_id: string; // 0 是系统 id
   message: string;
-  message_id: string; // 心跳不存在 id ，系统通知是 -1 、其余是 0
+  message_id: string; // 心跳不存在 id ，系统通知是 -1 、其余是 0 、未分配是 -2
 }
 
 export interface P2PMessageProp extends BaseMessageProp {
@@ -41,7 +43,7 @@ export interface P2PMessageProp extends BaseMessageProp {
 export interface BlockMessageProp extends BaseMessageProp {
   chat_type: ChatType; // 区分类型字段
   block_id: string;
-  at_user_id: string;
+  at_user_id: string | undefined;
 }
 // 系统
 export interface SystemMessageProp extends BaseMessageProp { }
@@ -50,15 +52,28 @@ export interface SystemMessageProp extends BaseMessageProp { }
 export type OtherMessageProp = Omit<BaseMessageProp, "message_id"> & {
   message?: string | undefined;
 };
-// 客户端服务器交互的数据类型
-export type MessageProp =
+
+// 客户端发送给服务端的消息类型
+// 需要自己生成一个临时 id 真实 id 在服务端给出
+export type SendMessageProp = (P2PMessageProp | BlockMessageProp) & {
+  temp_id: string; // 时间戳
+};
+// 服务器回传的确认消息
+export type ConfirmMessageProp = SendMessageProp;
+
+// 接收的消息类型
+export type ReceiveMessageProp =
   | P2PMessageProp
   | BlockMessageProp
   | SystemMessageProp
-  | OtherMessageProp;
-// 待确认消息类型
-export type TempMessageProp = (P2PMessageProp | BlockMessageStoreProp) & {
-  temp_id: string;
+  | OtherMessageProp
+  | ConfirmMessageProp;
+
+// 所有类型消息
+export type MessageProp = ReceiveMessageProp | SendMessageProp;
+
+export type TempMessageProp = SendMessageProp & {
+  expire: bigint; // 过期时间，时间戳
 };
 
 export interface ResponseProp<T> {

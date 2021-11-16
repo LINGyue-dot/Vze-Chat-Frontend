@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-11-12 10:57:02
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-15 00:03:25
+ * @LastEditTime: 2021-11-15 16:52:28
  * @Description: 当前 active 的部分状态属性
  * 存 active tab , active conversation_id ,active block_id || contacter_id
  */

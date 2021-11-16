@@ -3,6 +3,8 @@ import {
   BlockProp,
   ContacterMessageStoreProp,
   ContacterProp,
+  SendMessageProp,
+  TempMessageProp,
   WSFnsProp,
 } from "@/websocket/type";
 import { Module, Mutation } from "vuex";
@@ -11,7 +13,7 @@ import { Module, Mutation } from "vuex";
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-11-11 19:37:27
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-12 11:12:46
+ * @LastEditTime: 2021-11-15 17:08:46
  * @Description:
  */
 // TODO 添加个 active 状态
@@ -21,12 +23,12 @@ export interface WSStateType extends WSFnsProp {
   conatcterMessageList: ContacterMessageStoreProp[]; // 来自联系人的消息
   blockList: BlockProp[]; // 群列表
   blockMessageList: BlockMessageStoreProp[]; // 来自群的消息
+  tempMessageQueue: TempMessageProp[]; // 待确认的消息队列
 }
 
 export interface WSStoreType extends Module<WSStateType, WSStateType> {
   namespaced: boolean;
   name: string;
-
   state: WSStateType;
   mutations: {
     changeWSInstance: Mutation<WSStateType>;
@@ -52,6 +54,13 @@ const initState: WSStateType = {
   conatcterMessageList: [],
   blockList: [],
   blockMessageList: [],
+  onopen: () => {
+    console.log("websocket open");
+  },
+  onerror: (e: Event) => {
+    console.log("websocket error");
+  },
+  tempMessageQueue: [],
 };
 
 const WSStoreModel: WSStoreType = {

@@ -2,7 +2,7 @@
  * @Author: qianlong github:https://github.com/LINGyue-dot
  * @Date: 2021-10-26 20:29:04
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-15 15:44:00
+ * @LastEditTime: 2021-11-15 15:59:15
  * @Description:
  * 需要页面传递函数的：1.onopen 2.断开连接 function
  */
@@ -10,10 +10,13 @@
 import { WSTypes, WSStateType } from "@/store/ws";
 import { useStore } from "vuex";
 import { handleMessage } from "./utils";
+import store from "@/store";
+import { heartbaet } from "./heartbeat";
 
 export const WS_API = "ws://localhost:7000";
 
-const wsStore = useStore<{ ws: WSStateType }>();
+// const wsStore = useStore<{ ws: WSStateType }>();
+const wsStore = store;
 
 // 初始化 ws
 export const initWs = () => {
@@ -26,6 +29,8 @@ export const initWs = () => {
   }
   let tempWS = new WebSocket(WS_API);
   wsStore.commit(WSTypes.CHANGEWSINSTANCE, tempWS);
+
+  heartbaet()
 
   // 加上 if 只是为了去除 ts 报错
   if (wsStore.state.ws.wsInstance) {
