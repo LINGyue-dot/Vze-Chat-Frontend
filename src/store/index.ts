@@ -11,7 +11,8 @@ import ConversationStore from "./conversation";
 import InformationStore from "./information";
 import permissionStore from "./permission";
 import WSStoreModel from "./ws";
-
+import HistoryStore from "@/store/history";
+import MessageStore from "@/store/message";
 
 const store = createStore<any>({
   modules: {
@@ -20,6 +21,8 @@ const store = createStore<any>({
     active: ActiveStore,
     information: InformationStore,
     conversation: ConversationStore,
+    history: HistoryStore,
+    message: MessageStore,
   },
 });
 

@@ -3,23 +3,19 @@
  * @Date: 2021-11-11 20:36:45
  * @LastEditors: qianlong github:https://github.com/LINGyue-dot
  * @LastEditTime: 2021-11-15 16:50:42
- * @Description: 处理信息
+ * @Description: 处理收到信息
  */
 
 import store from "@/store";
-import { WSTypes, WSStateType } from "@/store/ws";
-import { useStore } from "vuex";
 import { initWs } from ".";
-import { heartbaet, zeroNoResponseTime } from "./heartbeat";
+import { zeroNoResponseTime } from "./heartbeat";
 import {
-  BaseMessageProp,
   BlockMessageProp,
-  BlockMessageStoreProp,
   ChatType,
-  ContacterMessageStoreProp,
   MessageProp,
   MessageType,
   P2PMessageProp,
+  ReceiveMessageProp,
   SendMessageProp,
 } from "./type";
 
@@ -28,18 +24,20 @@ const wsStore = store;
 
 // 处理收到的消息
 export function handleMessage(ev: MessageEvent<WebSocket>) {
-  const data = JSON.parse(ev.data as unknown as string) as MessageProp;
+  const data = JSON.parse(ev.data as unknown as string) as ReceiveMessageProp;
   // 只要一收到服务端的消息就将未响应的包数置零
   zeroNoResponseTime();
   switch (data.type) {
     case MessageType.PONG:
-      console.log("pong");
       break;
 
     case MessageType.SYSTEM:
       // 新用户登录
       break;
     case MessageType.MESSAGE:
+      // 返回确认消息
+      backConfirmMessage(data);
+      console.log(data);
       // 消息推送
       //
       if ((data as P2PMessageProp).chat_type === ChatType.PTP) {
@@ -49,6 +47,9 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
         hanleBlock(data as BlockMessageProp);
       }
       break;
+    case MessageType.CONFIRM:
+      store.dispatch("message/confirm", data);
+      break;
     case MessageType.CLOSE:
       // 关闭
       break;
@@ -56,6 +57,7 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
       break;
   }
 }
+
 // 原子操作发送消息
 function sendMessage(msg: MessageProp) {
   try {
@@ -69,40 +71,73 @@ function sendMessage(msg: MessageProp) {
     console.error(e);
   }
 }
+
+export function sendInitMessage() {
+  sendMessage({
+    type: MessageType.INIT,
+    from_user_id: wsStore.state.permission.user_id,
+    message: "init",
+  });
+}
+
+export function backConfirmMessage(message: ReceiveMessageProp) {
+  sendMessage({
+    ...message,
+    type: MessageType.CONFIRM,
+  });
+}
+
 // 发送 PING 消息
 export function sendPingMsg(msg: MessageProp) {
   console.log("ping");
   sendMessage(msg);
 }
+
 // 发送用户实体信息
-export function sendUserMessage(msg: SendMessageProp) {
-  sendMessage(msg);
+// 0. 为其分配一个 temp_id
+// 1. 将其直接 push 到对应群/联系人的历史消息中
+// 2. 添加消息到三个 map 中
+export function sendP2P(msg: P2PMessageProp) {
+  let temp: SendMessageProp = {
+    ...msg,
+    from_user_id: msg.from_user_id.toString(),
+    temp_id: Date.now().toString(),
+    to_user_id: msg.to_user_id.toString(),
+  };
+  store.dispatch("history/addP2PHistory", temp);
+  store.dispatch("message/send", temp);
+  sendMessage(temp);
 }
 
-//
-function hanlePTP(message: P2PMessageProp) {
-  let tempContacterMessage: ContacterMessageStoreProp = {
-    user_id: message.from_user_id,
-    message: message.message,
-    message_id: message.message_id,
+export function sendBlock(msg: BlockMessageProp) {
+  let temp: SendMessageProp = {
+    ...msg,
+    temp_id: Date.now().toString(),
   };
-  wsStore.commit(WSTypes.CHANGECONTACTERMESSAGELIST, [
-    ...wsStore.state.ws.conatcterMessageList,
-    tempContacterMessage,
-  ]);
+
+  store.state.sendMessage(temp);
+}
+
+// 接收 p2p 消息
+function hanlePTP(message: P2PMessageProp) {
+  wsStore.dispatch("history/addP2PHistory", {
+    ...message,
+    to_user_id: message.to_user_id.toString(),
+    from_user_id: message.from_user_id.toString(),
+  });
 }
 
 //
 function hanleBlock(message: BlockMessageProp) {
-  let tempBlockMessage: BlockMessageStoreProp = {
-    block_id: message.block_id,
-    message_id: message.message_id,
-    from_user_id: message.from_user_id,
-    at_user_id: message.at_user_id,
-    message: message.message,
-  };
-  wsStore.commit(WSTypes.CHANGEBLOCKMESSAGELIST, [
-    ...wsStore.state.ws.blockMessageList,
-    tempBlockMessage,
-  ]);
+  // let tempBlockMessage: BlockMessageStoreProp = {
+  //   block_id: message.block_id,
+  //   message_id: message.message_id,
+  //   from_user_id: message.from_user_id,
+  //   at_user_id: message.at_user_id,
+  //   message: message.message,
+  // };
+  // wsStore.commit(WSTypes.CHANGEBLOCKMESSAGELIST, [
+  //   ...wsStore.state.ws.blockMessageList,
+  //   tempBlockMessage,
+  // ]);
 }

@@ -446,9 +446,19 @@ Rclient
 
 会话列表中存在群聊或者用户，当有新消息时候该会话就会爬升到最上面。
 
-后端用 redis 的 zset 来存储每个用户的会话列表，某个会话（某个用户的联系人/群聊）有发送消息或者收到消息时候将其 score 变为最大值
+**后端**
 
-前端只在初始化时候获取一次该列表，如果收到/发送消息，前端自己进行调整会话列表的顺序
+用 redis 的 zset 来存储每个用户的会话列表，某个会话（某个用户的联系人/群聊）有发送消息或者收到消息时候将其 score 变为最大值
+
+**前端**
+
+只在初始化时候获取一次该列表，如果收到/发送消息，前端自己进行调整会话列表的顺序
+
+notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如果不是 activeChat 就数目++
+
+每切换 activeChat 时候就将对应的 notic_num 清空
+
+
 
 
 
@@ -516,6 +526,12 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
+## UI
+
+![image-20211117161907323](http://120.27.242.14:9900/uploads/upload_7aed76fb39fe2d7786d5613bf2fe77e4.png)
+
+
+
 ## 登录逻辑
 
 * 如果存在则返回数据，如果不存在则注册并返回数据（注册需要查三次表）
@@ -524,10 +540,11 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
-## Websocket
+## 收到 IM 消息
 
-* 添加单点一对一处理逻辑
-* 
+* 根据 chat_type 来推送到不同的历史消息中
+* 显示当前会话未读数目
+* 将收到该消息的会话提升到
 
 
 
@@ -542,9 +559,7 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
-# 页面与组件设计
 
-![image-20211112004934036](http://120.27.242.14:9900/uploads/upload_978616b73e48df2fa44803b758c8a764.png)
 
 * 就一个 spa ，三栏布局，并且三栏的组件分别独立，利用 vuex 控制显示与否
 * 聊天组件如果当前状态为空那么就将其不显示
@@ -581,6 +596,18 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 ## redis 结构
+
+这里以前缀名来形成 “表”
+
+```js
+ * 0. 存放 message_id 变量 key 命名：`message_id` value 就单一的 message_id
+ * 1. 用户会话列表的 redis , key 命名： `conversation:chat_room_${user_id}` value: Zset
+ * 2. 用户离线消息的 redis , key 命名：`offline:offline_message_${user_id}` value: List
+ * 3. 服务端已收到消息与 message_id 对应的 redis , key 命名：`message:${user_id}_${temp_id}` value: message_id
+ * 4. message_id 与待确认消息备份 redis , key 命名：`temp:${message_id} value: ${message}
+```
+
+
 
 
 
@@ -775,6 +802,15 @@ vue-loader 插件问题，删除 `node_modules` 再 yarn 即可
 
 
 
+# 项目复盘
+
+
+
+* 组件使用外部加个 div 用来控制分配给该组件的 长宽高、border 、margin 
+  * bgc 应该组件内自己写
+
+
+
 
 
 
@@ -829,14 +865,18 @@ vue-loader 插件问题，删除 `node_modules` 再 yarn 即可
 
 
 
+​	
+
+
+
+* 将传来的消息/发的消息直接存到历史记录中，不再构建一个新的类型
+* 
 
 
 
 
-* 给他生成一个会话 id `b_block_id` `c_c_id`：为了排序
-* active 的会话 id 、active 的 tab 、ative 的 block_id or c_id 存一个 stores
-* 用户信息 list 、群信息 list ，会话列表存一个 store
-* 聊天记录再单独存一个 store
+
+* 历史记录如何存储
 
 
 

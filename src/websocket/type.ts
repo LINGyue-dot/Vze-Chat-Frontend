@@ -39,25 +39,35 @@ export interface BaseMessageProp {
 export interface P2PMessageProp extends BaseMessageProp {
   chat_type: ChatType; // 区分类型字段
   to_user_id: string;
+  send_time?: number; // 时间戳，用于显示消息时间
 }
+
 export interface BlockMessageProp extends BaseMessageProp {
   chat_type: ChatType; // 区分类型字段
   block_id: string;
   at_user_id: string | undefined;
+  send_time?: number;
 }
+
 // 系统
-export interface SystemMessageProp extends BaseMessageProp { }
+export interface SystemMessageProp extends BaseMessageProp {}
 
 // 心跳、初始化
 export type OtherMessageProp = Omit<BaseMessageProp, "message_id"> & {
   message?: string | undefined;
 };
 
-// 客户端发送给服务端的消息类型
-// 需要自己生成一个临时 id 真实 id 在服务端给出
-export type SendMessageProp = (P2PMessageProp | BlockMessageProp) & {
+export type SendP2PMessageProp = P2PMessageProp & {
   temp_id: string; // 时间戳
 };
+
+export type SendBlockMessageProp = BlockMessageProp & {
+  temp_id: string; //时间戳
+};
+
+// 客户端发送给服务端的消息类型
+// 需要自己生成一个临时 id 真实 id 在服务端给出
+export type SendMessageProp = SendP2PMessageProp | SendBlockMessageProp;
 // 服务器回传的确认消息
 export type ConfirmMessageProp = SendMessageProp;
 
@@ -72,9 +82,11 @@ export type ReceiveMessageProp =
 // 所有类型消息
 export type MessageProp = ReceiveMessageProp | SendMessageProp;
 
-export type TempMessageProp = SendMessageProp & {
-  expire: bigint; // 过期时间，时间戳
-};
+export enum TempMessageState {
+  SENDING = "sending", // 正在发送
+  CONFIRM = "confirm", // 发送成功
+  FAIL = "fail", // 发送失败
+}
 
 export interface ResponseProp<T> {
   code: Number;
@@ -89,12 +101,6 @@ export interface UserProp {
 }
 
 export type ContacterProp = UserProp;
-// 联系人消息 p2p 消息 存储在 vuex
-export interface ContacterMessageStoreProp {
-  user_id: string;
-  message: string;
-  message_id: string | undefined;
-}
 
 export interface BlockProp {
   block_id: string;
@@ -103,18 +109,17 @@ export interface BlockProp {
   owner_id: string;
 }
 
-// 群消息存储在 vuex
-// TODO active keep-alive
-export interface BlockMessageStoreProp {
-  block_id: string;
-  at_user_id?: string;
-  from_user_id: string;
-  message_id: string;
-  message: string;
-}
-
 //  websocket 回调函数
 export interface WSFnsProp {
   onopen?: () => void;
   onerror?: (ev: Event) => void;
+}
+
+// 会话 item 类型
+export interface ConversationProp {
+  is_block: boolean;
+  conversation_id: string;
+  // 添加冗余数据为了减少数据切片
+  contacter_id?: string;
+  block_id?: string;
 }

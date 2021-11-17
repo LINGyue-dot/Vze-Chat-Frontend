@@ -6,20 +6,19 @@
  * @Description:
  */
 
-import { ConversationProp } from "@/store/conversation";
-
-
 // 将 message 类型转换为 conversation 类型
+import { ConversationProp } from "@/websocket/type";
+
 export function turnToConversation(data: any) {
   let cov: ConversationProp = {
-    is_block: data.block_id ? true : false,
+    is_block: !!data.block_id,
     block_id: data.block_id,
     contacter_id: data.contacter_id,
-    notice_num: 0,
-    conversation_id: data.block_id ?
-      `b_${data.block_id}`
-      : data.contacter_id ?
-        `c_${data.contacter_id}` : ''
-  }
-  return cov
+    conversation_id: data.block_id
+      ? `b_${data.block_id}`
+      : data.contacter_id
+      ? `c_${data.contacter_id}`
+      : "",
+  };
+  return cov;
 }

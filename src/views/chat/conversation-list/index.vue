@@ -20,7 +20,6 @@ const store = useStore<{ conversation: ConversationStateType }>();
 	flex-direction: column;
 	height: 100%;
 	width: 100%;
-	background-color: #fff;
 	overflow-y: scroll;
 }
 

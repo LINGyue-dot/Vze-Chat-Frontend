@@ -11,9 +11,10 @@ import { getBlockInformation, getUserInformation } from "@/api/ws";
 import { BlockProp, ResponseProp, UserProp } from "@/websocket/type";
 import { Action, Module, Mutation } from "vuex";
 
+// 信息
 export interface InformationStateType {
-  userList: UserProp[];
-  blockList: BlockProp[];
+  userList: UserProp[]; // 用户列表
+  blockList: BlockProp[]; // 群列表
 }
 
 export interface InformationStoreType
@@ -49,7 +50,7 @@ const InformationStore: InformationStoreType = {
     getUserInformation({ state, commit }, user_id: string) {
       return new Promise((resolve, reject) => {
         let user: UserProp | undefined;
-        state.userList.forEach(item => {
+        state.userList.forEach((item) => {
           if (item.user_id === user_id) {
             user = item;
           }
@@ -70,7 +71,7 @@ const InformationStore: InformationStoreType = {
     getBlockInformation({ state }, block_id: string) {
       return new Promise((resolve, reject) => {
         let block: BlockProp | undefined;
-        state.blockList.forEach(item => {
+        state.blockList.forEach((item) => {
           if (item.block_id === block_id) {
             block = item;
           }

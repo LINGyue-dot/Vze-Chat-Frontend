@@ -9,7 +9,7 @@
 
 import { WSTypes, WSStateType } from "@/store/ws";
 import { useStore } from "vuex";
-import { handleMessage } from "./utils";
+import { handleMessage, sendInitMessage } from "./utils";
 import store from "@/store";
 import { heartbaet } from "./heartbeat";
 
@@ -30,13 +30,14 @@ export const initWs = () => {
   let tempWS = new WebSocket(WS_API);
   wsStore.commit(WSTypes.CHANGEWSINSTANCE, tempWS);
 
-  heartbaet()
+  heartbaet();
 
   // 加上 if 只是为了去除 ts 报错
   if (wsStore.state.ws.wsInstance) {
     // 外部函数
     wsStore.state.ws.wsInstance.onopen = () => {
       wsStore.state.ws.onopen!();
+      sendInitMessage();
     };
     wsStore.state.ws.wsInstance.onerror = (ev: Event) => {
       wsStore.state.ws.onerror!(ev);

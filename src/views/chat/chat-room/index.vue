@@ -1,60 +1,69 @@
 <template>
-	<div
-		v-if="activeStore.state.active.activeConversationId"
-		class="chat-room-container"
-	>
-		<div class="title">{{ title }}</div>
-		<div class="content"><ChatRoomContent /></div>
-		<div class="input"><ChatInput /></div>
-	</div>
-	<div v-else class="white"></div>
+  <div
+    v-if="activeStore.state.active.activeConversationId"
+    class="chat-room-container"
+  >
+    <div class="title">{{ title }}</div>
+    <div class="content">
+      <ChatRoomContent/>
+    </div>
+    <div class="input">
+      <ChatInput/>
+    </div>
+  </div>
+  <div v-else class="white"></div>
 </template>
 <script lang="ts" setup>
-import { ActiveStateProp } from "@/store/active";
-import { BlockProp, UserProp } from "@/websocket/type";
-import { computed } from "@vue/reactivity";
-import { useStore } from "vuex";
-import ChatRoomContent from "./chat-room-content.vue";
-import ChatInput from "./chat-input.vue";
+import { ActiveStateProp } from '@/store/active'
+import { BlockProp, UserProp } from '@/websocket/type'
+import { computed } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import ChatRoomContent from './chat-room-content.vue'
+import ChatInput from './chat-input.vue'
 
-const activeStore = useStore<{ active: ActiveStateProp }>();
+const activeStore = useStore<{ active: ActiveStateProp }>()
 
 const title = computed(() => {
-	return (
-		(activeStore.state.active.activeChat as UserProp).user_name ||
-		(activeStore.state.active.activeChat as BlockProp).block_name ||
-		"哈哈哈哈"
-	);
-});
+  return (
+    (activeStore.state.active.activeChat as UserProp).user_name ||
+    (activeStore.state.active.activeChat as BlockProp).block_name ||
+    '哈哈哈哈'
+  )
+})
 </script>
 <style scoped>
 .chat-room-container {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
 .title {
-	width: 100%;
-	height: 60px;
-	font-size: 20px;
-	border-bottom: solid 1px #eee;
+  width: 100%;
+  height: 60px;
+  font-size: 20px;
+  padding-left: 10px;
+  padding-top: 10px;
+  border-bottom: solid 2px #eee;
+  background-color: #f5f5f5;
 }
+
 .content {
-	width: 100%;
-	flex: 5;
-	border-bottom: solid 2px #000;
+  width: 100%;
+  flex: 5;
+  border-bottom: solid 1px #eee;
+  overflow:hidden;
 }
 
 .input {
-	width: 100%;
-	flex: 2;
+  width: 100%;
+  flex: 2;
 }
 
 .white {
-	width: 100%;
-	height: 100%;
-	background-color: #eee;
+  width: 100%;
+  height: 100%;
+  background-color: #f7f7f7;
 }
 </style>
