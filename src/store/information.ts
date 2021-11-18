@@ -51,37 +51,48 @@ const InformationStore: InformationStoreType = {
       return new Promise((resolve, reject) => {
         let user: UserProp | undefined;
         state.userList.forEach((item) => {
-          if (item.user_id === user_id) {
+          if (item.user_id == user_id) {
             user = item;
           }
         });
         if (user) {
           // 如果以及有存储
-          resolve(user);
+          resolve({
+            ...user,
+            user_id: user.user_id?.toString(),
+          });
         } else {
           // 如果没有存储则请求
           getUserInformation(user_id).then((res: ResponseProp<any>) => {
             commit("pushUserList", res.data[0]);
-
-            resolve(res.data[0]);
+            resolve({
+              ...res.data[0],
+              user_id: res.data[0]?.user_id.toString(),
+            });
           });
         }
       });
     },
-    getBlockInformation({ state }, block_id: string) {
+    getBlockInformation({ state, commit }, block_id: string) {
       return new Promise((resolve, reject) => {
         let block: BlockProp | undefined;
         state.blockList.forEach((item) => {
-          if (item.block_id === block_id) {
+          if (item.block_id == block_id) {
             block = item;
           }
         });
         if (block) {
-          resolve(block);
+          resolve({
+            ...block,
+            block_id: block.block_id.toString(),
+          });
         } else {
           getBlockInformation(block_id).then((res: ResponseProp<any>) => {
-            this.commit("pushtBlockList", res.data[0]);
-            resolve(res.data[0]);
+            commit("pushtBlockList", res.data[0]);
+            resolve({
+              ...res.data[0],
+              block_id: res.data[0]?.block_id.toString(),
+            });
           });
         }
       });

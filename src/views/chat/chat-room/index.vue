@@ -5,7 +5,12 @@
   >
     <div class="title">{{ title }}</div>
     <div class="content">
-      <ChatRoomContent/>
+      <template v-if="!activeStore.state.active.activeChat.block_id">
+        <P2pRoom/>
+      </template>
+      <template v-else>
+        <BlockRoom/>
+      </template>
     </div>
     <div class="input">
       <ChatInput/>
@@ -18,8 +23,9 @@ import { ActiveStateProp } from '@/store/active'
 import { BlockProp, UserProp } from '@/websocket/type'
 import { computed } from '@vue/reactivity'
 import { useStore } from 'vuex'
-import ChatRoomContent from './chat-room-content.vue'
 import ChatInput from './chat-input.vue'
+import P2pRoom from '@/views/chat/chat-room/p2p-room.vue'
+import BlockRoom from '@/views/chat/chat-room/block-room.vue'
 
 const activeStore = useStore<{ active: ActiveStateProp }>()
 
@@ -53,7 +59,7 @@ const title = computed(() => {
   width: 100%;
   flex: 5;
   border-bottom: solid 1px #eee;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .input {

@@ -4,8 +4,7 @@
 			v-for="item in store.state.conversation.conversationList"
 			:key="item.conversation_id"
 			:conversation="item"
-		>
-		</ConversationListItem>
+		/>
 	</div>
 </template>
 <script lang="ts" setup>

@@ -22,6 +22,7 @@ const send = () => {
   if (!msg.value.trim()) {
     return
   } else {
+    console.log(msg.value)
     // 群消息
     if ((activeStore.state.active.activeChat as BlockProp)?.block_id) {
       sendBlock({
@@ -54,7 +55,7 @@ const send = () => {
 }
 </script>
 <style scoped>
-.ci-container{
+.ci-container {
   width: 100%;
   height: 100%;
   position: relative;
@@ -66,7 +67,7 @@ const send = () => {
   height: 100%;
 }
 
-.input-area{
+.input-area {
   display: block;
   width: 100%;
   height: 100%;

@@ -548,6 +548,32 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
+## IM 消息渲染
+
+
+
+### 发送的 input 该如何实现
+
+发送的文本框包括一下功能
+
+* 拖动自动上传：上传文件后自动转换为 
+* 图片插入显示
+* emoj 显示
+* @ 功能（暂时用 正则）
+* 获取格式即 \n 
+
+
+
+
+
+### 接收的 content 如何渲染
+
+`innerHTML` 进行渲染
+
+
+
+
+
 
 
 ## websocket 发送消息

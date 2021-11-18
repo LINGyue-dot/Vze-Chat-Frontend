@@ -14,61 +14,61 @@ export interface PermissionStateType extends UserProp {
   login_state: boolean; // 登录状态，用于路由跳转
 }
 
-export interface PermissionStoreType extends Module<PermissionStateType, PermissionStateType> {
+export interface PermissionStoreType
+  extends Module<PermissionStateType, PermissionStateType> {
   name: string;
-  state: PermissionStateType,
+  state: PermissionStateType;
   mutations: {
-    changeLogin: Mutation<PermissionStateType>,
-    changeUserName: Mutation<PermissionStateType>,
-    changeUserId: Mutation<PermissionStateType>,
-    changeUserImg: Mutation<PermissionStateType>,
-  },
+    changeLogin: Mutation<PermissionStateType>;
+    changeUserName: Mutation<PermissionStateType>;
+    changeUserId: Mutation<PermissionStateType>;
+    changeUserImg: Mutation<PermissionStateType>;
+  };
   actions: {
-    login: Action<PermissionStateType, PermissionStateType>
-  }
+    login: Action<PermissionStateType, PermissionStateType>;
+  };
 }
 
 const initState: PermissionStateType = {
   login_state: false,
-  user_name: localStorage.getItem('user_name') || undefined,
-  user_id: localStorage.getItem('user_id'),
-  user_img: localStorage.getItem('user_img')
-}
+  user_name: localStorage.getItem("user_name") || undefined,
+  user_id: localStorage.getItem("user_id"),
+  user_img: localStorage.getItem("user_img"),
+};
 
 const permissionStore: PermissionStoreType = {
   namespaced: true,
-  name: 'permission',
+  name: "permission",
   state: initState,
   mutations: {
     changeLogin(state, payload) {
-      state.login_state = payload
+      state.login_state = payload;
     },
     changeUserId(state, payload) {
-      state.user_id = payload
-      localStorage.setItem('user_id', payload)
-
+      state.user_id = payload;
+      localStorage.setItem("user_id", payload);
     },
     changeUserName(state, payload) {
-      state.user_name = payload
-      localStorage.setItem('user_name', payload)
+      state.user_name = payload;
+      localStorage.setItem("user_name", payload);
     },
     changeUserImg(state, payload) {
-      state.user_img = payload
-      localStorage.setItem('user_img', payload)
-    }
+      state.user_img = payload;
+      localStorage.setItem("user_img", payload);
+    },
   },
   actions: {
     login({ commit }, name: string) {
       return login(name).then((res: ResponseProp<any>) => {
-        commit('changeLogin', true);
-        commit('changeUserName', name);
-        commit('changeUserId', res.data.user_id);
-        commit('changeUserImg', res.data.user_img);
+        commit("changeLogin", true);
+        commit("changeUserName", name);
+        commit("changeUserId", res.data.user_id);
+        commit("changeUserImg", res.data.user_img);
         return res;
       });
-    }
-  }
-}
+    },
+  },
+};
 
 export const PermissionTypes = {
   CHANGE_lOGIN: "permission/change_login",
@@ -77,4 +77,4 @@ export const PermissionTypes = {
   CHANGE_IMG: "permission/change_img",
 };
 
-export default permissionStore
+export default permissionStore;

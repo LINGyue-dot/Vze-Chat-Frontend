@@ -37,7 +37,6 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
     case MessageType.MESSAGE:
       // 返回确认消息
       backConfirmMessage(data);
-      console.log(data);
       // 消息推送
       //
       if ((data as P2PMessageProp).chat_type === ChatType.PTP) {
@@ -114,8 +113,9 @@ export function sendBlock(msg: BlockMessageProp) {
     ...msg,
     temp_id: Date.now().toString(),
   };
-
-  store.state.sendMessage(temp);
+  store.dispatch("history/addBlockHistory", temp);
+  store.dispatch("message/send", temp);
+  sendMessage(temp);
 }
 
 // 接收 p2p 消息
@@ -129,15 +129,10 @@ function hanlePTP(message: P2PMessageProp) {
 
 //
 function hanleBlock(message: BlockMessageProp) {
-  // let tempBlockMessage: BlockMessageStoreProp = {
-  //   block_id: message.block_id,
-  //   message_id: message.message_id,
-  //   from_user_id: message.from_user_id,
-  //   at_user_id: message.at_user_id,
-  //   message: message.message,
-  // };
-  // wsStore.commit(WSTypes.CHANGEBLOCKMESSAGELIST, [
-  //   ...wsStore.state.ws.blockMessageList,
-  //   tempBlockMessage,
-  // ]);
+  wsStore.dispatch("history/addBlockHistory", {
+    ...message,
+    from_user_id: message.from_user_id.toString(),
+    at_user_id: message.at_user_id?.toString(),
+    block_id: message.block_id.toString(),
+  });
 }

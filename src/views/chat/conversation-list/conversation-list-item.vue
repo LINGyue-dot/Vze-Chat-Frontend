@@ -3,8 +3,7 @@
     class="conversation-list-item-container"
     :class="{
 			active:
-				props.conversation.conversation_id ===
-				activeStore.state.active.activeConversationId,
+				props.conversation.conversation_id ===activeStore.state.active.activeConversationId,
 		}"
     @click="handlClick"
   >
@@ -47,13 +46,17 @@ const name = ref<string | undefined>(
 
 const tempChat = ref<BlockProp | ContacterProp | undefined>()
 
+// 激活后修改 active 以及 对应的 notice 数目
 const handlClick = () => {
   activeStore.commit(ActiveTypes.CHANGEACTIVECONVERSATION, {
     activeConversationId: props.conversation.conversation_id,
     activeChat: tempChat.value,
   })
-  historyStore.state.history.p2pNotice.set(props.conversation.contacter_id, 0)
-
+  if (props.conversation.is_block) {
+    historyStore.state.history.blockNotice.set(props.conversation.block_id, 0)
+  } else {
+    historyStore.state.history.p2pNotice.set(props.conversation.contacter_id, 0)
+  }
 }
 
 onMounted(async () => {

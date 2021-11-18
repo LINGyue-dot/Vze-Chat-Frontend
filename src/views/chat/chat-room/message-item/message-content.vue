@@ -1,6 +1,6 @@
 <template>
   <div class="mc-container">
-    <div class="content">{{ $props.content }}</div>
+    <div class="content" v-html="$props.content.replace(/\n\r?/g, '<br />')"></div>
   </div>
 </template>
 <script lang="ts" setup>

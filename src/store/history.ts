@@ -76,7 +76,6 @@ const HistoryStore: HistoryStoreType = {
         // 需要选择插入的位置
         const temp = state.p2pHistory.get(payload.from_user_id);
         insertHistory<P2PMessageProp>(temp as [], payload as P2PMessageProp);
-
         //  调整未读消息数目
         //  通知数目调整
         // 如果是 active 则不操作
@@ -97,9 +96,43 @@ const HistoryStore: HistoryStoreType = {
       }
     },
     addBlockHistory(
-      { state },
+      { state, rootState },
       payload: BlockMessageProp | SendBlockMessageProp
-    ) {},
+    ) {
+      payload.block_id = payload.block_id.toString();
+      // 如果没有记录则创建
+      if (!state.blockHistory.has(payload.block_id)) {
+        state.blockHistory.set(payload.block_id, []);
+      }
+
+      // 如果是自己消息，直接 push 进入消息列表
+      // @ts-ignore
+      if (payload.from_user_id == rootState.permission.user_id) {
+        const tempArr = state.blockHistory.get(payload.block_id);
+        tempArr?.push(payload as SendBlockMessageProp);
+      } else {
+        // 如果别人消息
+        const tempArr = state.blockHistory.get(payload.block_id);
+        insertHistory<BlockMessageProp>(tempArr as BlockMessageProp[], payload);
+
+        // 调整未读消息数目
+        //  如果当前 active 为空，或者当前 active 不为收到的群聊 则未读数目++
+        if (
+          // @ts-ignore
+          !rootState.active.activeChat ||
+          // @ts-ignore
+          (rootState.active.activeChat &&
+            // @ts-ignore
+            rootState.active.activeChat?.block_id != payload.block_id)
+        ) {
+          // 如果不是 active 的就未读数目数目++
+          state.blockNotice.set(
+            payload.block_id,
+            (state.blockNotice.get(payload.block_id) || 0) + 1
+          );
+        }
+      }
+    },
   },
 };
 
@@ -124,7 +157,6 @@ export function insertHistory<T>(arr: T[], message: T) {
   }
   // 插入到 i 之后
   arr.splice(i + 1, 0, message);
-  console.log(arr);
 }
 
 export default HistoryStore;
