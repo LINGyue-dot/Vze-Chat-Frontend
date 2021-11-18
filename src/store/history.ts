@@ -109,6 +109,7 @@ const HistoryStore: HistoryStoreType = {
       // @ts-ignore
       if (payload.from_user_id == rootState.permission.user_id) {
         const tempArr = state.blockHistory.get(payload.block_id);
+        console.log("push new block message", payload);
         tempArr?.push(payload as SendBlockMessageProp);
       } else {
         // 如果别人消息
@@ -131,6 +132,8 @@ const HistoryStore: HistoryStoreType = {
             (state.blockNotice.get(payload.block_id) || 0) + 1
           );
         }
+
+        console.log(state.blockNotice.get(payload.block_id));
       }
     },
   },

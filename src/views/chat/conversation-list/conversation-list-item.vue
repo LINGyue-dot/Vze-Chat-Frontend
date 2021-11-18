@@ -9,9 +9,13 @@
   >
     <img class="item-img" :src="imgSrc" alt=""/>
     <div class="content">
-      {{ name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
-        noticeNum || 0
-      }}
+      {{ name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <template v-if="activeStore.state.active.activeChat&&activeStore.state.active.activeChat.block_id">
+        {{ p2pNoticeNum || 0 }}
+      </template>
+      <template v-else>
+        {{ blockNoticeNum || 0 }}
+      </template>
     </div>
   </div>
 </template>
@@ -34,7 +38,17 @@ const props = defineProps({
 })
 //
 
-const noticeNum = computed(() => historyStore.state.history.p2pNotice.get(props.conversation.contacter_id))
+const p2pNoticeNum = computed(() => historyStore.state.history.p2pNotice.get(props.conversation.contacter_id))
+
+const blockNoticeNum = computed(() => historyStore.state.history.blockNotice.get(props.conversation.block_id))
+
+onMounted(() => {
+  setInterval(() => {
+    console.log(p2pNoticeNum)
+    console.log(blockNoticeNum)
+  }, 3000)
+
+})
 
 const activeStore = useStore<{ active: ActiveStateProp }>()
 const informationStore = useStore<{ information: InformationStateType }>()

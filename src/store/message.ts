@@ -96,7 +96,7 @@ const MessageStore: MessageStoreProp = {
       console.log(payload);
       state.flagMap.set(payload.temp_id, TempMessageState.CONFIRM);
       state.flagMap.delete(payload.temp_id);
-      if (state.timerMap.get(payload.temp_id) !== undefined) {
+      if (state.timerMap.has(payload.temp_id)) {
         // @ts-ignore
         clearTimeout(state.timerMap.get(payload.temp_id));
       }

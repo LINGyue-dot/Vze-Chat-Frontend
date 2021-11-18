@@ -129,6 +129,7 @@ function hanlePTP(message: P2PMessageProp) {
 
 //
 function hanleBlock(message: BlockMessageProp) {
+  console.log("hanleBlock");
   wsStore.dispatch("history/addBlockHistory", {
     ...message,
     from_user_id: message.from_user_id.toString(),

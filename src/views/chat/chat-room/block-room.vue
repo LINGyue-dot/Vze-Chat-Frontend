@@ -36,7 +36,7 @@ const scrollToBottom = () => {
 //   deep: true
 // })
 
-watch(() => historyStore.state.history.blockHistory.get((activeStore.state.active.activeChat as BlockProp).block_id.toString()), () => {
+watch(() => historyStore.state.history.blockHistory.get((activeStore.state.active.activeChat as BlockProp).block_id), () => {
   scrollToBottom()
 }, {
   deep: true
