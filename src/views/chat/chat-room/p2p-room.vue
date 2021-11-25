@@ -1,7 +1,8 @@
 <template>
   <div class="cr-container" ref="contentRef">
-    <ContacterMessageItem v-for="item in p2pList"
+    <ContacterMessageItem v-for="(item,index) in p2pList"
                           :key="item.temp_id||item.message_id"
+                          :lastTime="index>0?p2pList[index-1].send_time:0"
                           :message="item"
     />
   </div>
@@ -22,13 +23,14 @@ const historyStore = useStore<{ history: HistoryStateType }>()
 
 const contentRef = ref<HTMLDivElement>(null)
 
+// @ts-ignore
 const p2pList = computed(() => historyStore.state.history.p2pHistory.get((activeStore.state.active.activeChat as UserProp).user_id))
 
 // onMounted(() => {
 //   setInterval(() => {
 //     console.log(historyStore.state.history.p2pHistory, typeof (activeStore.state.active.activeChat as UserProp).user_id)
+//     console.log(p2pList)
 //   }, 1000)
-//
 // })
 
 //
@@ -36,6 +38,7 @@ const scrollToBottom = () => {
   contentRef.value.scrollTop = contentRef.value.scrollHeight
 }
 
+// @ts-ignore
 watch(() => historyStore.state.history.p2pHistory.get((activeStore.state.active.activeChat as UserProp).user_id), () => {
   scrollToBottom()
 }, {

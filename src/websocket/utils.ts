@@ -35,6 +35,7 @@ export function handleMessage(ev: MessageEvent<WebSocket>) {
       // 新用户登录
       break;
     case MessageType.MESSAGE:
+      console.log(data);
       // 返回确认消息
       backConfirmMessage(data);
       // 消息推送

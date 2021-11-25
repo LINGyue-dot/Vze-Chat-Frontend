@@ -46,3 +46,12 @@ export const getConversationList = () => {
     },
   });
 };
+
+export const getContacterList = () => {
+  return http("/ws/contacter", {
+    method: "GET",
+    data: {
+      user_id: store.state.permission.user_id,
+    },
+  });
+};

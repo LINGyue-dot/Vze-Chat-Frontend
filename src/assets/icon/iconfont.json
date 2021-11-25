@@ -1,0 +1,128 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "55511",
+      "name": "添加好友",
+      "font_class": "68",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "629364",
+      "name": "完成",
+      "font_class": "wancheng",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
+      "icon_id": "722473",
+      "name": "loading",
+      "font_class": "loading",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "791886",
+      "name": "会话",
+      "font_class": "huihua-copy",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "1133813",
+      "name": "联系人",
+      "font_class": "lianxiren",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "1330772",
+      "name": "未完成",
+      "font_class": "weiwancheng",
+      "unicode": "e755",
+      "unicode_decimal": 59221
+    },
+    {
+      "icon_id": "4608987",
+      "name": "联系人",
+      "font_class": "lianxiren1",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "5831367",
+      "name": "未完成",
+      "font_class": "weiwancheng1",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "5878990",
+      "name": "联系人",
+      "font_class": "lianxiren2",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "6992598",
+      "name": "当前会话",
+      "font_class": "dangqianhuihua",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "10792685",
+      "name": "新增多个角色/群组_新增新建操作_jurassic",
+      "font_class": "jurassic_add-users",
+      "unicode": "e6f4",
+      "unicode_decimal": 59124
+    },
+    {
+      "icon_id": "11891825",
+      "name": "add-group",
+      "font_class": "add-group",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    },
+    {
+      "icon_id": "13743965",
+      "name": "loading",
+      "font_class": "loading1",
+      "unicode": "e689",
+      "unicode_decimal": 59017
+    },
+    {
+      "icon_id": "14720688",
+      "name": "添加  加好友  添加朋友",
+      "font_class": "tianjiajiahaoyoutianjiapengyou",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "16322471",
+      "name": "添加好友",
+      "font_class": "tianjiahaoyou",
+      "unicode": "e6dd",
+      "unicode_decimal": 59101
+    },
+    {
+      "icon_id": "19911510",
+      "name": "添加群组",
+      "font_class": "tianjiaqunzu_huaban1",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "24847075",
+      "name": "加群",
+      "font_class": "jiaqun",
+      "unicode": "e676",
+      "unicode_decimal": 58998
+    }
+  ]
+}

@@ -538,6 +538,18 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
+### 加好友/群逻辑
+
+出现浮层，搜索名字出现列表
+
+
+
+
+
+### 时间显示
+
+当前这条消息如果距离上一条消息的时间差超过2分钟就显示，
+
 
 
 ## 收到 IM 消息
@@ -552,7 +564,7 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
-### 发送的 input 该如何实现
+### 发送的 input 
 
 发送的文本框包括一下功能
 
@@ -560,15 +572,15 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 * 图片插入显示
 * emoj 显示
 * @ 功能（暂时用 正则）
-* 获取格式即 \n 
+* 获取格式即
+
+### 如何设计
+
+需要同时考虑如何 input 如何显示以及收到消息时候如何渲染，同时也需要考虑安全问题
+
+使用 `contenteditable = true` + `v-html`  实现一个简单的富文本编辑器，但是直接使用 `v-html` 有很大的安全问题而且这个消息是由其他用户来发送的，无法控制其中是否插入脚本
 
 
-
-
-
-### 接收的 content 如何渲染
-
-`innerHTML` 进行渲染
 
 
 
@@ -595,6 +607,8 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
+
+* 点击联系人 item 创建该用户的会话并将 active 状态移到 conversation
 
 
 
@@ -826,6 +840,12 @@ vue-loader 插件问题，删除 `node_modules` 再 yarn 即可
 
 
 
+### node-mysql 符号冲突
+
+如果存入 mysql 的字符内有 `" '`  就会发生冲突
+
+
+
 
 
 # 项目复盘
@@ -851,6 +871,7 @@ vue-loader 插件问题，删除 `node_modules` 再 yarn 即可
 * [NAT 详解](https://www.cnblogs.com/ssyfj/p/14791064.html#%E4%B8%80nat%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B)
 * https://juejin.cn/post/6844903624561147918
 * http://www.52im.net/thread-1616-1-1.html
+* https://juejin.cn/post/6844903785731457032
 * http://www.52im.net/thread-1998-1-1.html
 * http://www.52im.net/thread-2747-1-1.html
 * http://www.52im.net/thread-753-1-1.html

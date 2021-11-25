@@ -7,7 +7,11 @@
  * 存 用户信息列表、群信息
  */
 
-import { getBlockInformation, getUserInformation } from "@/api/ws";
+import {
+  getBlockInformation,
+  getContacterList,
+  getUserInformation,
+} from "@/api/ws";
 import { BlockProp, ResponseProp, UserProp } from "@/websocket/type";
 import { Action, Module, Mutation } from "vuex";
 
@@ -15,6 +19,7 @@ import { Action, Module, Mutation } from "vuex";
 export interface InformationStateType {
   userList: UserProp[]; // 用户列表
   blockList: BlockProp[]; // 群列表
+  contacterList: UserProp[]; // 联系人列表
 }
 
 export interface InformationStoreType
@@ -23,10 +28,12 @@ export interface InformationStoreType
   mutations: {
     pushUserList: Mutation<InformationStateType>;
     pushtBlockList: Mutation<InformationStateType>;
+    initContacterList: Mutation<InformationStateType>;
   };
   actions: {
     getUserInformation: Action<InformationStateType, InformationStateType>;
     getBlockInformation: Action<InformationStateType, InformationStateType>;
+    getContacterList: Action<InformationStateType, InformationStateType>;
   };
 }
 
@@ -34,6 +41,7 @@ export interface InformationStoreType
 const initState: InformationStateType = {
   userList: [],
   blockList: [],
+  contacterList: [],
 };
 const InformationStore: InformationStoreType = {
   namespaced: true,
@@ -44,6 +52,9 @@ const InformationStore: InformationStoreType = {
     },
     pushtBlockList(state, payload) {
       state.blockList = [...state.blockList, payload];
+    },
+    initContacterList(state, payload) {
+      state.contacterList = payload;
     },
   },
   actions: {
@@ -96,6 +107,15 @@ const InformationStore: InformationStoreType = {
           });
         }
       });
+    },
+    async getContacterList({ commit }) {
+      try {
+        const { data } = await getContacterList();
+        commit("initContacterList", data);
+        data.forEach((user: UserProp) => commit("pushUserList", user));
+      } catch (e) {
+        console.error(e);
+      }
     },
   },
 };

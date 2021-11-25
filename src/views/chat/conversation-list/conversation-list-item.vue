@@ -10,12 +10,15 @@
     <img class="item-img" :src="imgSrc" alt=""/>
     <div class="content">
       {{ name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <template v-if="activeStore.state.active.activeChat&&activeStore.state.active.activeChat.block_id">
-        {{ p2pNoticeNum || 0 }}
+
+      <template v-if="p2pNoticeNum||blockNoticeNum">
+        <div class="notice">
+          {{ p2pNoticeNum || blockNoticeNum }}
+        </div>
+
       </template>
-      <template v-else>
-        {{ blockNoticeNum || 0 }}
-      </template>
+      <template v-else></template>
+
     </div>
   </div>
 </template>
@@ -38,17 +41,21 @@ const props = defineProps({
 })
 //
 
+onMounted(() => {
+
+  setInterval(() => {
+    if (!historyStore.state.history.p2pNotice.get(props.conversation.contacter_id)) {
+      return
+    }
+    console.log(props.conversation.contacter_id)
+    console.log(historyStore.state.history.p2pNotice.get(props.conversation.contacter_id))
+  }, 1000)
+
+})
+
 const p2pNoticeNum = computed(() => historyStore.state.history.p2pNotice.get(props.conversation.contacter_id))
 
 const blockNoticeNum = computed(() => historyStore.state.history.blockNotice.get(props.conversation.block_id))
-
-onMounted(() => {
-  setInterval(() => {
-    console.log(p2pNoticeNum)
-    console.log(blockNoticeNum)
-  }, 3000)
-
-})
 
 const activeStore = useStore<{ active: ActiveStateProp }>()
 const informationStore = useStore<{ information: InformationStateType }>()
@@ -131,5 +138,21 @@ onMounted(async () => {
   flex: 1;
   padding-left: 5px;
   height: 100%;
+  position: relative;
+}
+
+.notice {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  height: 20px;
+  line-height: 20px;
+  width: 20px;
+  float: right;
+  text-align: center;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.6);
+  color: #fff;
 }
 </style>

@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import { InformationStateType } from '@/store/information'
 import { PermissionStateType } from '@/store/permission'
-import { BlockMessageProp, P2PMessageProp, UserProp } from '@/websocket/type'
+import { BlockMessageProp, P2PMessageProp, SendP2PMessageProp, TempMessageState, UserProp } from '@/websocket/type'
 import { onMounted, PropType, ref } from '@vue/runtime-core'
 import { useStore } from 'vuex'
 import MessageContent from './message-content.vue'
@@ -40,6 +40,8 @@ const getUserInfo = async () => {
     props.message.from_user_id
   )
 }
+
+
 
 onMounted(() => {
   getUserInfo()

@@ -87,6 +87,7 @@ const HistoryStore: HistoryStoreType = {
             // @ts-ignore
             rootState.active.activeChat?.user_id != payload.from_user_id)
         ) {
+          console.log(payload.from_user_id, typeof payload.from_user_id);
           // 如果不是 active 的就未读数目数目++
           state.p2pNotice.set(
             payload.from_user_id,

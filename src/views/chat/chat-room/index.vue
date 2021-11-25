@@ -62,6 +62,10 @@ const title = computed(() => {
   overflow: hidden;
 }
 
+.content p {
+  margin: 0 !important;
+}
+
 .input {
   width: 100%;
   flex: 2;

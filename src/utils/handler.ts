@@ -13,7 +13,7 @@ export function turnToConversation(data: any) {
   let cov: ConversationProp = {
     is_block: !!data.block_id,
     block_id: data.block_id?.toString(),
-    contacter_id: data.contacter_id?.toString(),
+    contacter_id: data.contacter_id?.toString() || data.user_id?.toString(),
     conversation_id: data.block_id
       ? `b_${data.block_id}`
       : data.contacter_id

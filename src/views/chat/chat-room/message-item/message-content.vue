@@ -1,6 +1,6 @@
 <template>
   <div class="mc-container">
-    <div class="content" v-html="$props.content.replace(/\n\r?/g, '<br />')"></div>
+    <div class="content" v-html="$props.content"></div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -21,8 +21,14 @@ defineProps({
   min-width: 30px;
   max-width: 100%;
   min-height: 30px;
+  line-height: 30px;
   word-break: break-all;
   word-wrap: anywhere;
-
 }
+
+.content >>> p {
+  margin: 0;
+}
+
+
 </style>
