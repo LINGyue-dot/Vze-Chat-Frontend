@@ -6,8 +6,7 @@
  * @Description: fetch get data from backend
  */
 import qs from "qs";
-
-export const BASE_API = "http://localhost:3100";
+import { BASE_API } from "@/api/config";
 
 export interface ConfigProp extends RequestInit {
   data?: Object;

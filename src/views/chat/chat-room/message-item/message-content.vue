@@ -1,6 +1,7 @@
 <template>
   <div class="mc-container">
-    <div class="content" v-html="$props.content"></div>
+    <quick-preview :code="$props.content"/>
+    <!--    <div class="content" v-html="$props.content"></div>-->
   </div>
 </template>
 <script lang="ts" setup>

@@ -7,5 +7,6 @@
  */
 
 module.exports = {
-	lintOnSave: false,
+  lintOnSave: false,
+  runtimeCompiler: true,
 };

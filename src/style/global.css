@@ -1,2 +1,11 @@
 @import "normalize.css";
 @import "../assets/icon/iconfont.css";
+
+ .ant-image-preview-mask {
+  z-index: 99999!important;
+  
+}
+
+ .ant-image-preview-wrap {
+  z-index: 999999 !important;
+}

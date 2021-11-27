@@ -6,6 +6,10 @@
  * @Description: 默认的一些配置
  */
 // 默认图片
-export const deafultImg = 'http://qianlon.cn/upload/2021/11/image-c571dd25ab744ff0a954fae2cfe5b61a.png'
+export const deafultImg =
+  "http://qianlon.cn/upload/2021/11/image-c571dd25ab744ff0a954fae2cfe5b61a.png";
 
-export const deafultAvatar = 'http://qianlon.cn/upload/2021/11/image-c571dd25ab744ff0a954fae2cfe5b61a.png'
+export const deafultAvatar =
+  "http://qianlon.cn/upload/2021/11/image-c571dd25ab744ff0a954fae2cfe5b61a.png";
+
+export const imgUrl = "http://images.qianlon.cn:5700";

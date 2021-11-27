@@ -1,10 +1,16 @@
 import E from "wangeditor";
+import { CustomImg } from "@/editor/customImg";
 
 let editor: undefined | E;
+const customImg = "customImg";
 
-function initEditor() {
+function initEditor(imgCb: () => {}) {
   editor = new E("#editor");
-  editor.config.menus = ["emoticon", "image"];
+  // 挂载到静态变量
+  // @ts-ignore
+  CustomImg.cb = imgCb;
+  editor.menus.extend(customImg, CustomImg);
+  editor.config.menus = ["emoticon", "customImg"];
   editor.config.showMenuTooltips = false;
   editor.config.showFullScreen = false;
   editor.config.height = 200;
@@ -24,7 +30,13 @@ export function clearContent() {
 }
 
 export function getHTML() {
-  return editor?.txt.html();
+  return (editor?.txt.html() as string)
+    .replaceAll("<img", "<a-image")
+    .replaceAll("</img>", "</a-image>");
+}
+
+export function addImg(imgUrl: string) {
+  return editor?.txt.append(`<img class="input-img" src="${imgUrl}" />`);
 }
 
 export default initEditor;

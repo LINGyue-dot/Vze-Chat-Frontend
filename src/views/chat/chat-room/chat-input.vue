@@ -1,10 +1,11 @@
 <template>
   <div class="ci-container">
     <div class="input">
-      <div id="editor" ></div>
+      <div id="editor"></div>
       <!--      <a-textarea class="input-area" v-model:value="msg" @pressEnter.prevent="send"/>-->
     </div>
     <a-button class="btn" type="primary" @click="sendHTML">发送</a-button>
+    <UploadFile ref="ufRef"/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -14,11 +15,26 @@ import { useStore } from 'vuex'
 import { ActiveStateProp } from '@/store/active'
 import { BlockProp, ChatType, MessageType, UserProp } from '@/websocket/type'
 import { PermissionStateType } from '@/store/permission'
-import initEditor, { clearContent, getHTML } from '@/editor'
+import initEditor, { addImg, clearContent, getHTML } from '@/editor'
 import { onMounted } from '@vue/runtime-core'
+import UploadFile from '@/components/upload-file/index.vue'
+import { ComponentPublicInstance } from 'vue'
+
+const ufRef = ref<ComponentPublicInstance<typeof UploadFile>>()
+const imgCb = () => {
+  // 图片 url
+  ufRef.value?.overwriteByParent(getImgUrl)
+  // 调用 input file 聚焦
+  ufRef.value?.callInputClick()
+  console.log('-------')
+}
+// 获取图片 url
+const getImgUrl = (url: string) => {
+  addImg(url)
+}
 
 onMounted(() => {
-  initEditor()
+  initEditor(imgCb)
 })
 
 const sendHTML = () => {
@@ -43,7 +59,7 @@ const send = () => {
         message_id: '-2',
         message: msg.value.trim(),
         chat_type: ChatType.BLOCK,
-        send_time:Date.now(),
+        send_time: Date.now(),
         // @ts-ignore
         block_id: activeStore.state.active.activeChat.block_id,
         at_user_id: undefined,
@@ -58,7 +74,7 @@ const send = () => {
         message_id: '-2',
         message: msg.value.trim(),
         chat_type: ChatType.PTP,
-        send_time:Date.now(),
+        send_time: Date.now(),
         // @ts-ignore
         to_user_id: (activeStore.state.active.activeChat as UserProp).user_id.toString(),
       })
@@ -75,8 +91,7 @@ const send = () => {
   width: 100%;
   height: 100%;
   position: relative;
-  overflow-x:hidden;
-
+  /*overflow-x: hidden;*/
 }
 
 .input {
@@ -84,7 +99,8 @@ const send = () => {
   width: 100%;
   height: 100%;
 }
-.input >>> p{
+
+.input >>> p {
   word-break: break-all;
 }
 
@@ -98,7 +114,7 @@ const send = () => {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  z-index: 999999 !important;
+  z-index: 10000 !important;
 }
 
 

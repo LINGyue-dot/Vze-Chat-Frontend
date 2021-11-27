@@ -1,5 +1,11 @@
 
 .w-e-panel-container {
   margin-top: -265px !important;
-  margin-left: -28px !important;
+  margin-left: 0 !important;
+}
+
+.input-img {
+  max-width: 200px;
+  max-height: 150px;
+  object-fit: cover;
 }

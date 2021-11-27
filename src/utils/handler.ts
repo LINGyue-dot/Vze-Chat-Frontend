@@ -8,6 +8,7 @@
 
 // 将 message 类型转换为 conversation 类型
 import { ConversationProp } from "@/websocket/type";
+import { imgUrl } from "@/utils/config";
 
 export function turnToConversation(data: any) {
   let cov: ConversationProp = {
@@ -21,4 +22,12 @@ export function turnToConversation(data: any) {
       : "",
   };
   return cov;
+}
+
+// 提取文件后缀名
+const extractExt = (filename: string) =>
+  filename.slice(filename.lastIndexOf("."), filename.length); // 提取后缀名
+
+export function generateImageUrl(filename: string, fileHash: string) {
+  return `${imgUrl}/${fileHash}${extractExt(filename)}`;
 }
