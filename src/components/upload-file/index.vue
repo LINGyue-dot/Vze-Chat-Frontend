@@ -1,6 +1,6 @@
 <template>
   <div class="uf-container">
-    <input type="file" ref="fileRef" @change="handleFileChange">
+    <input type="file" ref="fileRef" accept="image/*" @change="handleFileChange">
     <a-button @click="hanleUpload">上传</a-button>
   </div>
 </template>

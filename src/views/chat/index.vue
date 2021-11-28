@@ -28,7 +28,9 @@ onMounted(() => {
 })
 nextTick(() => {
   initWs()
-
+  // 获取用户的 联系人 / 群 列表
+  store.dispatch('information/getContacterList')
+  store.dispatch('information/getBlockList')
 })
 </script>
 <style scoped>

@@ -1,5 +1,54 @@
 
 
+# 项目介绍
+
+上线地址：
+
+前端 github 地址：https://github.com/LINGyue-dot/Vze-Chat-Frontend
+
+后端 github 地址
+
+
+
+一个即时通讯的项目，目前已经实现
+
+* 一对一文字图片聊天
+* 群聊文字图片聊天
+* 消息的可靠有序传输
+* 离线消息推送
+* 心跳检测
+* 断线重连
+* 图片的切片上传以及秒传
+* 一对一视频聊天（由于 https 限制未加入到聊天室中，路由位于 `/offer` `/answer` ）
+
+> 如只在意 IM 实现技术直接转下方的 IM 开发章节
+
+## 配置依赖
+
+### 前端
+
+Vue3 全家桶 + TS + Antdv 
+
+核心技术使用 websocket 进行通信，同时在一对一视频聊天使用的是 socket.io （由于还没完全加入到聊天室中，所以暂时隔离）
+
+项目使用大量的 vuex 用于存储消息，用户的信息等（这部分可以考虑使用 localStorage 来进行本地存储）
+
+### 后端
+
+Koa + TS + mysql + redis + websocket
+
+由于 mysql 的配置 TS 支持不好（不知是不是编辑器问题） 所以后端 models 层是用 JS 来写
+
+> 注意在整个项目中可以使用 mysql 完成 redis 的全部能力
+
+
+
+
+
+
+
+
+
 
 
 # Websocket
@@ -8,18 +57,14 @@
 
 ### 心跳包发送
 
-为什么需要发心跳包？
+**为什么需要发心跳包**？
 
 * 长连接保持连接防止 **NAT** 超时（因为 TCP 本身只要设置 Keep-Alive 就不会自动断开）
 * 为了实时知道客户端服务端的状态即探测连接是否断开
 
+**具体实现**
 
-
-前端当没有向 websocket 发送数据后每 5s 发送一个心跳包，用 flag 标识后端未返回次数，当前端发送第二个心跳包时候 flag == 1 或者发送心跳包失败就视为连接断开，后端启动一个 7s 的摧毁倒计时
-
-* 发送心跳包失败就可以看作连接失效？链接失效是什么表现？
-
-
+前端当没有向 websocket 发送数据后每 5s 发送一个心跳包，用 flag 标识后端未返回次数，当前端发送第二个心跳包时候 flag 大于等于2时或者发送心跳包失败就视为连接断开，后端启动一个 7s 的摧毁倒计时
 
 
 
@@ -29,17 +74,13 @@
 
 客户端发送心跳包给服务端，服务端每接收到心跳包之后重新开始摧毁该连接的倒计时
 
-如何判断是否断线：
+**如何判断是否断线：**
 
 客户端：发送两个心跳包后当要发送第三个心跳包时候发现还没收到（此时服务端出现问题）或者客户端无法发送心跳包（客户端网络出现问题）那么就断线
 
 服务端：由于长时间没有接收到心跳包所有就摧毁该连接（客户端或者服务端问题）
 
 极端情况：如果客户端断线的一瞬间正好断网导致心跳包无法发送，客户端会尝试使用这个旧的连接如果可用的话就直接使用，如果不可用就尝试去创建一个新的连接。（服务端为主体即客户端需要断开连接时候需要等待服务端，等待服务端的连接不可用时候才可以重新连接）
-
-
-
-
 
 
 
@@ -75,18 +116,6 @@ ICE 候选人：（优先级从上到下）
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 通信图
 
 
@@ -116,10 +145,6 @@ ICE 候选人：（优先级从上到下）
 那么此时 server (1,1,1,1:1000) 想 client 发送，则路由器会将数据转发
 
 当之后又有 server (2,2,2,2:2000) 向 client 发送数据，则对称性路由器会将其丢弃拒绝转发（因为映射表已经存在）
-
-
-
-## 会议一对多模式代理在服务器还是在本地
 
 
 
@@ -188,8 +213,6 @@ navigator.mediaDevices
 
 
 
-
-
 # WebSocket vs WebRtc
 
 * 基于协议不同
@@ -209,8 +232,6 @@ navigator.mediaDevices
 # IM 开发
 
 客户端发送消息给服务器，服务器存储转发消息给各个客户端
-
-
 
 
 
@@ -372,20 +393,12 @@ Rclient
 
 * 自己的消息是直接 push 进去的
   * 先判断消息是否只存在 temp_id ，如只存 temp_id ，判断是否在确认队列中（不再队列中说明是成功），判断确认队列中的状态来渲染状态
-  * 
-* 
+  
+    
 
 
 
 
-
-
-
-
-
-
-
-### 遍历的间隔时间如何确定
 
 > 项目中只对用户发送的消息进行验证消息的确认机制。
 >
@@ -395,7 +408,7 @@ Rclient
 
 先考虑是客户端利用 api 拉还是服务端用 ws 推
 
-项目中用推
+项目中用推，即与在线消息一致，看作是服务端通过 ws 再发送消息给客户端
 
 
 
@@ -460,39 +473,6 @@ notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如
 
 
 
-
-
-
-
-
-
-
-
-## 消息数据结构
-
-```ts
-interface P2PProp {
-  to_user_id: string;
-}
-interface BlockProp {
-  block_id: string;
-  at_user_id: string;
-}
-interface SystemProp {
-
-}
-
-export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
-  type: MessageType;
-  chat_type?: ChatType;
-  from_user_id: string; // 0 是系统 id 
-  message: string | undefined | null;
-  message_id?: string;
-}
-```
-
-
-
 ## 部分未实现
 
 * 时间块的显示，即如何设计
@@ -505,14 +485,8 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
   ![image-20211114153543200](http://120.27.242.14:9900/uploads/upload_b9ed7af0e4372c9339fe096781a8219e.png)
 
-* 拉去历史消息
+  
 
-  * http://www.52im.net/thread-1998-1-1.html
-  * ![image-20211114153930977](http://120.27.242.14:9900/uploads/upload_a469a207a5c6ccc7ba86ddf83db78248.png)
-
-* 在线状态 http://www.52im.net/thread-715-1-1.html
-
-* 
 
 
 
@@ -534,17 +508,13 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 ## 登录逻辑
 
-* 如果存在则返回数据，如果不存在则注册并返回数据（注册需要查三次表）
+如果存在则返回数据，如果不存在则注册并返回数据
 
 
 
 ### 加好友/群逻辑
 
 出现浮层，搜索名字出现列表
-
-
-
-
 
 ### 时间显示
 
@@ -566,72 +536,37 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 ### 发送的 input 
 
-发送的文本框包括一下功能
+项目使用 [wangEditor](https://github.com/wangeditor-team/wangEditor) 该库来实现
 
-* 拖动自动上传：上传文件后自动转换为 
-* 图片插入显示
-* emoj 显示
-* @ 功能（暂时用 正则）
-* 获取格式即
 
-### 如何设计
 
-需要同时考虑如何 input 如何显示以及收到消息时候如何渲染，同时也需要考虑安全问题
+### 收到的消息如何渲染
 
-使用 `contenteditable = true` + `v-html`  实现一个简单的富文本编辑器，但是直接使用 `v-html` 有很大的安全问题而且这个消息是由其他用户来发送的，无法控制其中是否插入脚本
+直接使用 `v-html` 
 
 
 
 
 
+### 搜索好友
 
+后端模糊搜索返回全部，前端请求全部联系人，判断这些是否再联系人中，如果不再就可以加为好友
 
+### 搜索群
 
+与搜索好友一致
 
-## websocket 发送消息
+### 创建群
 
-* 前端想后端请求一个 message id ，那么然后乐观更新，后端全部广播，当前端再次收到说明已经发出去了
-* 如果前端再次收到的 id 不一样或者此时断线了那么就报错
+直接创建
 
-
-
-
-
-
-
-* 就一个 spa ，三栏布局，并且三栏的组件分别独立，利用 vuex 控制显示与否
-* 聊天组件如果当前状态为空那么就将其不显示
-
-
-
-
-
-
-
-* 点击联系人 item 创建该用户的会话并将 active 状态移到 conversation
-
-
+​	
 
 
 
 
 
 # 需求分析和数据库设计
-
-
-
-## 需求分析
-
-
-
-### IM WS 即时通讯
-
-* 即时通讯
-* 多人群、单一聊天
-* @ 功能
-* 联系人功能
-* 获取历史消息（这里不实现已读）（虚拟列表渲染）
-* 群文件功能
 
 
 
@@ -650,8 +585,6 @@ export type MessageProp = (P2PProp | BlockProp | SystemProp) & {
 
 
 
-
-* 用户会话列表 ( `chat-room-[user_id]` )
 
 
 
@@ -773,7 +706,7 @@ values (1, 3);
 
 
 
-#### sql 语句书写
+
 
 
 
@@ -848,23 +781,6 @@ vue-loader 插件问题，删除 `node_modules` 再 yarn 即可
 
 
 
-# 项目复盘
-
-
-
-* 组件使用外部加个 div 用来控制分配给该组件的 长宽高、border 、margin 
-  * bgc 应该组件内自己写
-
-
-
-
-
-
-
-
-
-
-
 # Refrence
 
 * https://juejin.cn/post/6896045087659130894
@@ -879,205 +795,4 @@ vue-loader 插件问题，删除 `node_modules` 再 yarn 即可
 * https://socket.io
 * https://zhuanlan.zhihu.com/p/63662433
 * .....
-
-# temp
-
-* 媒体协商具体是如何做的
-
-
-
-
-
-* 后端只传 user_id ，
-* 开始前端获取所有联系人数据并存储他的基础信息（ user_id user_name user_img ）到 vuex 中
-* 开始前端获取会话中所有群的消息( block_id block_name block_img ) 到  vuex 中
-* p2p 时候后端只传 user_id 前端自己通过 user_id 来进行通知
-* 每次点开群聊时候，前端获取群内所有的用户信息 ( user_id user_name user_img ) 并将其存储到 vuex 中
-* 群聊时候后端传 user_id block_id 前端自己通过这俩进行渲染通知
-
-
-
-* 所有联系人数据并存储他的基础信息（ user_id user_name user_img ）到 vuex 中
-* vuex 
-
-
-
-* 
-
-* 收到的数据传入 vuex 中，在页面中监听 vuex 中数据即可
-
-
-
-* 会话列表如何显示（大部分本地读取）（存储在 redis 中）
-
-
-
-​	
-
-
-
-* 将传来的消息/发的消息直接存到历史记录中，不再构建一个新的类型
-* 
-
-
-
-
-
-* 历史记录如何存储
-
-
-
-
-
-
-
-```js
-/*
- * @Author: qianlong github:https://github.com/LINGyue-dot
- * @Date: 2021-10-26 20:29:04
- * @LastEditors: qianlong github:https://github.com/LINGyue-dot
- * @LastEditTime: 2021-11-09 12:05:23
- * @Description:
- */
-
-export const WS_API = "ws://localhost:7000";
-
-import { MessageProp, MessageType, WsOptions } from "./type";
-import store from "@/store";
-
-class WS {
-  private _websocket: WebSocket | undefined;
-
-  private _incomingOnmessage: undefined | ((data: MessageProp) => void);
-  private _incomingOnopen: undefined | (() => void);
-  private _incomingOnerror: undefined | ((e: Error) => void);
-
-  private _connectSuccess: undefined | (() => void);
-  private _connectFail: undefined | ((str: string) => void);
-
-  // heartbeat
-  private _noResponseTime: Number = 0;
-
-  private _heartTimeout: NodeJS.Timeout | undefined;
-  // 存储配置信息，为了断线重连摧毁原链接建立新的 ws 使用
-  private _wsUrl: string | undefined;
-  private _wsConfigFn: WsOptions | undefined;
-
-  constructor(url: string, configFn: WsOptions) {
-    this._wsUrl = url;
-    this._wsConfigFn = configFn;
-    this._init();
-  }
-
-  private _init() {
-    if (!this._wsUrl || !this._wsConfigFn) {
-      return;
-    }
-    this.closeWs();
-    this._noResponseTime = 0;
-
-    // init websocket
-    this._websocket = new WebSocket(this._wsUrl);
-    // attention 'this' pointer
-    this._websocket.onopen = this._onopen.bind(this);
-    this._websocket.onmessage = this._onmessage.bind(this);
-    //
-    this._connectSuccess = this._wsConfigFn.connectSuccess;
-    this._connectFail = this._wsConfigFn.connectFail;
-    //
-    this._incomingOnopen = this._wsConfigFn.onopen;
-    this._incomingOnmessage = this._wsConfigFn.onmessage;
-    this._incomingOnerror = this._wsConfigFn.onerror;
-  }
-
-  private _onopen() {
-    this._incomingOnopen && this._incomingOnopen();
-    this._sendInitData();
-  }
-
-  private _onmessage(evt: MessageEvent<WebSocket>) {
-    const data = JSON.parse(evt.data as unknown as string) as MessageProp;
-
-    // 清空掉心跳包记录，有返回数据说明该连接还可以用
-    this._noResponseTime = 0;
-
-    switch (data.type) {
-      case MessageType.PONG:
-        break;
-      case MessageType.SYSTEM:
-        // 新用户加入 ws
-        break;
-      case MessageType.MESSAGE:
-        // 消息处理
-        break;
-
-      default:
-        break;
-    }
-
-    if (data.type !== MessageType.PONG) {
-      // show all message from server about oneself or others
-      this._incomingOnmessage && this._incomingOnmessage(data);
-    } else {
-      // to debug
-    }
-  }
-
-  // 发送心跳包逻辑
-  private _handleSendPing() {
-    // 发送的时候开始下次心跳包发送的倒计时
-    if (this._heartTimeout) {
-      clearTimeout(this._heartTimeout);
-    }
-    this._heartTimeout = setTimeout(() => {
-      //
-      // 如果上一次的心跳包没有响应，则摧毁此链接，创建新的连接
-      if (this._noResponseTime >= 1) {
-        this._init();
-      }
-      this.send("ping", MessageType.PING);
-    }, 5 * 1000);
-  }
-
-  private _sendInitData() {
-    this.send("join", MessageType.INIT);
-  }
-
-  // send message to server
-  private _send(data: MessageProp) {
-    try {
-      // websocket 断开
-      if (this._websocket?.readyState === 3) {
-        this._init();
-        return;
-      }
-
-      this._websocket?.send(Buffer.from(JSON.stringify(data)));
-    } catch (e) {
-      console.log("108");
-      console.error(e);
-    }
-  }
-
-  public closeWs() {
-    this._websocket?.close();
-  }
-
-  // universal send fucntion for outer
-  public send(msg: string, type?: MessageType) {
-    this._handleSendPing();
-
-    const tempData: MessageProp = {
-      user_name: store.state.user_name || "",
-      user_id: store.state.user_id || "",
-      type: type || MessageType.USER,
-      message: msg,
-    };
-    this._send(tempData);
-  }
-}
-
-export default WS;
-
-```
 

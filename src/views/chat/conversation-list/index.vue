@@ -26,11 +26,14 @@ import ConversationListItem from './conversation-list-item.vue'
 import { computed } from '@vue/reactivity'
 import { InformationStateType } from '@/store/information'
 import ConatcterListItem from '@/views/chat/conversation-list/conatcter-list-item.vue'
+import { onMounted } from '@vue/runtime-core'
 
 const store = useStore<{ conversation: ConversationStateType }>()
 const activeStore = useStore<{ active: ActiveStateProp }>()
 const informationStore = useStore<{ information: InformationStateType }>()
 
+onMounted(()=>{
+console.log(store.state.conversation.conversationList)})
 
 </script>
 <style scoped>

@@ -6,6 +6,7 @@
  * @Description:
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -51,7 +52,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  next();
+  if (to.path != "/login" && !store.state.permission.login_state) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 export default router;

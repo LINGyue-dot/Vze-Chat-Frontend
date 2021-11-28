@@ -10,11 +10,12 @@ import io, { Socket } from "socket.io-client";
 import initEvent from "./event";
 export * from "./polyfill";
 import "webrtc-adapter";
+import { SOCKETIO_API } from "@/api/config";
 
 export default function initSocket(): Promise<Socket> {
-	const socket = io("http://localhost:3100");
-	initEvent(socket);
-	return new Promise(resolve => {
-		resolve(socket);
-	});
+  const socket = io(SOCKETIO_API);
+  initEvent(socket);
+  return new Promise((resolve) => {
+    resolve(socket);
+  });
 }

@@ -17,8 +17,8 @@ export function turnToConversation(data: any) {
     contacter_id: data.contacter_id?.toString() || data.user_id?.toString(),
     conversation_id: data.block_id
       ? `b_${data.block_id}`
-      : data.contacter_id
-      ? `c_${data.contacter_id}`
+      : data.contacter_id || data.user_id
+      ? `c_${data.contacter_id || data.user_id}`
       : "",
   };
   return cov;

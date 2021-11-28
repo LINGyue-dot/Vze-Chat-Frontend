@@ -69,6 +69,7 @@ const title = computed(() => {
 .input {
   width: 100%;
   flex: 2;
+  z-index: 10;
 }
 
 .white {

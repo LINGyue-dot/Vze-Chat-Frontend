@@ -66,9 +66,9 @@ const ConversationStore: ConversationStoreType = {
       });
       commit("initConversationList", result);
     },
-    // 将某个 conversation 提升至最高，如果没有该 conversation 则新建，payload 是 UserProp?&{conversation_id}，并将其返回
+    // 将某个 conversation 提升至最高，如果没有该 conversation 则新建，payload 是 UserProp?BlockProp?&{conversation_id}，并将其返回
     async topConversation({ state, commit }, payload) {
-      const { user, conversation_id } = payload;
+      const { user, block, conversation_id } = payload;
       const list = state.conversationList;
       for (let i = 0; i < list.length; i++) {
         // 如果存在
@@ -79,9 +79,9 @@ const ConversationStore: ConversationStoreType = {
           return temp;
         }
       }
-
       //  如果不存在该会话，则构造会话
-      let temp = turnToConversation(user);
+      let temp = turnToConversation(user || block);
+      console.log(temp);
       list.unshift(temp);
       return temp;
     },

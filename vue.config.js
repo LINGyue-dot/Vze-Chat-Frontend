@@ -9,4 +9,18 @@
 module.exports = {
   lintOnSave: false,
   runtimeCompiler: true,
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          modifyVars: {
+            "primary-color": "#1bb55e",
+            "link-color": "#1DA57A",
+            "border-radius-base": "2px",
+          },
+          javascriptEnabled: true,
+        },
+      },
+    },
+  },
 };

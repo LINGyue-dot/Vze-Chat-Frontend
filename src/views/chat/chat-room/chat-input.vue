@@ -57,6 +57,7 @@ const send = () => {
         // @ts-ignore
         from_user_id: permissionStore.state.permission.user_id.toString(),
         message_id: '-2',
+        // TODO 由於 node-mysql 插入時候 ' " 插入會造成錯誤，所以這是一個臨時方案
         message: msg.value.trim(),
         chat_type: ChatType.BLOCK,
         send_time: Date.now(),
@@ -98,6 +99,7 @@ const send = () => {
   display: block;
   width: 100%;
   height: 100%;
+  z-index: 10 !important;
 }
 
 .input >>> p {

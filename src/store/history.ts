@@ -133,8 +133,6 @@ const HistoryStore: HistoryStoreType = {
             (state.blockNotice.get(payload.block_id) || 0) + 1
           );
         }
-
-        console.log(state.blockNotice.get(payload.block_id));
       }
     },
   },

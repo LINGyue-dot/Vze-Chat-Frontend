@@ -35,6 +35,10 @@
       @click="openNewBlock"
     ></div>
 
+    <ContacterDrawer ref="contacterRef"/>
+    <BlockDrawer ref="blockRef"/>
+    <NewModal ref="nRef"/>
+
   </div>
 </template>
 <script lang="ts" setup>
@@ -43,6 +47,9 @@ import { PermissionStateType } from '@/store/permission'
 import { useStore } from 'vuex'
 import { deafultAvatar } from '@/utils/config'
 import { ref } from '@vue/runtime-core'
+import ContacterDrawer from '@/views/chat/chat-tab/drawers/contacter-drawer.vue'
+import BlockDrawer from '@/views/chat/chat-tab/drawers/block-drawer.vue'
+import NewModal from '@/views/chat/chat-tab/drawers/new-modal.vue'
 
 const permissionStore = useStore<{ permission: PermissionStateType }>()
 
@@ -54,18 +61,22 @@ const clickContacter = () => {
   activeStore.dispatch('information/getContacterList')
 }
 
-const joinContacter = ref(false)
+// 添加联系人
+const contacterRef = ref()
 const openJoinContacter = () => {
-  joinContacter.value = true
+  contacterRef.value?.openDrawer()
 }
-const joinBlock = ref(false)
+// 加入群
+const blockRef = ref()
 const openJoinBlock = () => {
-  joinBlock.value = true
+  blockRef.value?.openDrawer()
 }
-const newBlock = ref(false)
+// 新建群
+const nRef = ref()
 const openNewBlock = () => {
-  newBlock.value = true
+  nRef.value?.openModal()
 }
+
 
 </script>
 <style scoped>

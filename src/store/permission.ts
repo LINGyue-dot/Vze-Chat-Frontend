@@ -30,7 +30,10 @@ export interface PermissionStoreType
 }
 
 const initState: PermissionStateType = {
-  login_state: false,
+  login_state:
+    !!localStorage.getItem("user_id") &&
+    !!localStorage.getItem("user_id") &&
+    !!localStorage.getItem("user_img"),
   user_name: localStorage.getItem("user_name") || undefined,
   user_id: localStorage.getItem("user_id"),
   user_img: localStorage.getItem("user_img"),

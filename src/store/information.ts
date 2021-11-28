@@ -9,11 +9,13 @@
 
 import {
   getBlockInformation,
+  getBlockList,
   getContacterList,
   getUserInformation,
 } from "@/api/ws";
 import { BlockProp, ResponseProp, UserProp } from "@/websocket/type";
 import { Action, Module, Mutation } from "vuex";
+import { stat } from "fs";
 
 // 信息
 export interface InformationStateType {
@@ -29,11 +31,13 @@ export interface InformationStoreType
     pushUserList: Mutation<InformationStateType>;
     pushtBlockList: Mutation<InformationStateType>;
     initContacterList: Mutation<InformationStateType>;
+    initBlockList: Mutation<InformationStateType>;
   };
   actions: {
     getUserInformation: Action<InformationStateType, InformationStateType>;
     getBlockInformation: Action<InformationStateType, InformationStateType>;
     getContacterList: Action<InformationStateType, InformationStateType>;
+    getBlockList: Action<InformationStateType, InformationStateType>;
   };
 }
 
@@ -56,13 +60,16 @@ const InformationStore: InformationStoreType = {
     initContacterList(state, payload) {
       state.contacterList = payload;
     },
+    initBlockList(state, payload) {
+      state.blockList = payload;
+    },
   },
   actions: {
     getUserInformation({ state, commit }, user_id: string) {
       return new Promise((resolve, reject) => {
         let user: UserProp | undefined;
         state.userList.forEach((item) => {
-          if (item.user_id == user_id) {
+          if (item.user_id == user_id && item.user_img && item.user_name) {
             user = item;
           }
         });
@@ -88,7 +95,7 @@ const InformationStore: InformationStoreType = {
       return new Promise((resolve, reject) => {
         let block: BlockProp | undefined;
         state.blockList.forEach((item) => {
-          if (item.block_id == block_id) {
+          if (item.block_id == block_id && item.block_img && item.block_name) {
             block = item;
           }
         });
@@ -113,6 +120,15 @@ const InformationStore: InformationStoreType = {
         const { data } = await getContacterList();
         commit("initContacterList", data);
         data.forEach((user: UserProp) => commit("pushUserList", user));
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    // 获取用户的群列表
+    async getBlockList({ commit }) {
+      try {
+        const { data } = await getBlockList();
+        commit("initBlockList", data);
       } catch (e) {
         console.error(e);
       }

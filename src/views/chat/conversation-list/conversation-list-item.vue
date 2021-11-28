@@ -31,7 +31,6 @@ import { deafultImg } from '@/utils/config'
 import { BlockProp, ContacterProp, ConversationProp, UserProp } from '@/websocket/type'
 import { HistoryStateType } from '@/store/history'
 import { computed } from '@vue/reactivity'
-import { watch } from 'vue'
 
 const props = defineProps({
   conversation: {
@@ -41,17 +40,13 @@ const props = defineProps({
 })
 //
 
-onMounted(() => {
-
-  setInterval(() => {
-    if (!historyStore.state.history.p2pNotice.get(props.conversation.contacter_id)) {
-      return
-    }
-    console.log(props.conversation.contacter_id)
-    console.log(historyStore.state.history.p2pNotice.get(props.conversation.contacter_id))
-  }, 1000)
-
-})
+// onMounted(() => {
+//   setInterval(() => {
+//     if (!historyStore.state.history.p2pNotice.get(props.conversation.contacter_id)) {
+//       return
+//     }
+//   }, 1000)
+// })
 
 const p2pNoticeNum = computed(() => historyStore.state.history.p2pNotice.get(props.conversation.contacter_id))
 
@@ -68,7 +63,10 @@ const name = ref<string | undefined>(
 const tempChat = ref<BlockProp | ContacterProp | undefined>()
 
 // 激活后修改 active 以及 对应的 notice 数目
-const handlClick = () => {
+const handlClick = async () => {
+  if (!tempChat.value) {
+    await initActiveChat()
+  }
   activeStore.commit(ActiveTypes.CHANGEACTIVECONVERSATION, {
     activeConversationId: props.conversation.conversation_id,
     activeChat: tempChat.value,
@@ -80,7 +78,11 @@ const handlClick = () => {
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
+  initActiveChat()
+})
+
+const initActiveChat = async () => {
   if (props.conversation.is_block) {
     const block: BlockProp = await informationStore.dispatch(
       'information/getBlockInformation',
@@ -104,10 +106,9 @@ onMounted(async () => {
         imgSrc.value = user.user_img
       }
       name.value = user.user_name
-      console.log(name.value, user.user_name)
     }
   }
-})
+}
 </script>
 <style scoped>
 .conversation-list-item-container {
@@ -124,7 +125,7 @@ onMounted(async () => {
 }
 
 .active {
-  background-color: pink;
+  background-color: rgba(46, 46, 46, 0.5);
 }
 
 .item-img {

@@ -16,7 +16,7 @@ export enum TabProp {
   Contacter = "Contacter",
 }
 
-// 
+//
 export interface ActiveStateProp {
   activeTab: TabProp;
   activeConversationId: string | undefined;
@@ -31,7 +31,7 @@ export interface ActiveStoreType
   mutations: {
     switchTab: Mutation<ActiveStateProp>;
     changeActiveConversation: Mutation<ActiveStateProp>;
-  }
+  };
 }
 export const ActiveTypes = {
   SWITCHTAB: "active/switchTab",
@@ -41,7 +41,7 @@ export const ActiveTypes = {
 const initState: ActiveStateProp = {
   activeTab: TabProp.Conversation,
   activeConversationId: undefined,
-  activeChat: undefined
+  activeChat: undefined,
 };
 
 const ActiveStore: ActiveStoreType = {
@@ -51,16 +51,18 @@ const ActiveStore: ActiveStoreType = {
   mutations: {
     switchTab(state, payload: TabProp) {
       state.activeTab = payload;
-      console.log('68 active', payload)
     },
-    changeActiveConversation(state, payload: {
-      activeConversationId: string;
-      activeChat: BlockProp | ContacterProp | undefined
-    }) {
+    changeActiveConversation(
+      state,
+      payload: {
+        activeConversationId: string;
+        activeChat: BlockProp | ContacterProp | undefined;
+      }
+    ) {
       state.activeConversationId = payload.activeConversationId;
-      state.activeChat = payload.activeChat
+      state.activeChat = payload.activeChat;
     },
-  }
+  },
 };
 
 export default ActiveStore;

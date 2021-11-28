@@ -8,12 +8,10 @@
  */
 
 import { WSTypes, WSStateType } from "@/store/ws";
-import { useStore } from "vuex";
 import { handleMessage, sendInitMessage } from "./utils";
 import store from "@/store";
 import { heartbaet } from "./heartbeat";
-
-export const WS_API = "ws://localhost:7000";
+import { WS_API } from "@/api/config";
 
 // const wsStore = useStore<{ ws: WSStateType }>();
 const wsStore = store;
