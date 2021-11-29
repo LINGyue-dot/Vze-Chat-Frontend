@@ -85,6 +85,10 @@ const mergeRequest = async () => {
   }, UPLOAD_API).then(res => {
     console.log(res)
     message.success('上传成功')
+    // 计算获取当前文件的 hash 值
+    if (cb) {
+      cb(generateImageUrl(contentFile.value?.name || 'temp.png', fileHash.value))
+    }
   })
 }
 
@@ -95,12 +99,12 @@ const hanleUpload = async () => {
   }
   const fileChunkList = createFileChunk(contentFile.value)
   fileHash.value = await calculateHash(fileChunkList)
-  // 计算获取当前文件的 hash 值
-  if (cb) {
-    cb(generateImageUrl(contentFile.value?.name || 'temp.png', fileHash.value))
-  }
 
   if (await alreadyUpload()) {
+    // 计算获取当前文件的 hash 值
+    if (cb) {
+      cb(generateImageUrl(contentFile.value?.name || 'temp.png', fileHash.value))
+    }
     return
   }
   chunkList.value = fileChunkList.map(({ file }, index) => ({
