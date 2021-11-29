@@ -11,7 +11,7 @@ import store from "@/store";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: "/chat",
     component: () => import("@/layout/base-layout.vue"),
     children: [
       {

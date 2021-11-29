@@ -2,11 +2,11 @@
 
 # 项目介绍
 
-上线地址：
+上线地址：http://vze.qianlon.cn/
 
 前端 github 地址：https://github.com/LINGyue-dot/Vze-Chat-Frontend
 
-后端 github 地址
+后端 github 地址：https://github.com/LINGyue-dot/Vze-Chat-Backend
 
 
 
@@ -37,8 +37,6 @@ Vue3 全家桶 + TS + Antdv
 
 Koa + TS + mysql + redis + websocket
 
-由于 mysql 的配置 TS 支持不好（不知是不是编辑器问题） 所以后端 models 层是用 JS 来写
-
 > 注意在整个项目中可以使用 mysql 完成 redis 的全部能力
 
 
@@ -53,8 +51,6 @@ Koa + TS + mysql + redis + websocket
 
 # Websocket
 
-
-
 ### 心跳包发送
 
 **为什么需要发心跳包**？
@@ -64,7 +60,11 @@ Koa + TS + mysql + redis + websocket
 
 **具体实现**
 
-前端当没有向 websocket 发送数据后每 5s 发送一个心跳包，用 flag 标识后端未返回次数，当前端发送第二个心跳包时候 flag 大于等于2时或者发送心跳包失败就视为连接断开，后端启动一个 7s 的摧毁倒计时
+前端发送 ping 包给后端，后端响应 pong
+
+前端当没有向 websocket 发送数据后每 5s 发送一个心跳包，用 flag 标识后端未返回次数，当前端发送第二个心跳包时候 flag 大于等于2时或者发送心跳包失败就视为连接断开
+
+后端每接收到 ping 包就销毁上一个摧毁倒计时以及再启动一个 7s 的摧毁倒计时
 
 
 
@@ -114,12 +114,6 @@ ICE 候选人：（优先级从上到下）
 2. 反射候选人：表示 NAT 内主机的外网 ip 地址，端口。接着尝试反射获取的 IP 地址以及端口连接
 3. 中继候选人：表示中继服务器。接着尝试中转服务器来建立连接
 
-
-
-通信图
-
-
-
 ## 媒体协商
 
 如下图：就是  Amy 发送 offer Bob 返回 Answer
@@ -156,6 +150,7 @@ ICE 候选人：（优先级从上到下）
 ### 1. 获取设备的摄像头/音频数据流
 
 ```js
+// 注意该 api 需要在 securty 环境下（即 https 或 localhost ）
 navigator.mediaDevices
 		.getUserMedia({ audio: false, video: true })
 		.then(stream => {
@@ -247,10 +242,6 @@ navigator.mediaDevices
 
 服务端从连接建立就开始一个倒计时 7s 的摧毁连接计时器，也就是当服务端 7s 内没有收到客户端传来的消息就认为连接断开。
 
-
-
-
-
 ## 消息 id 如何生成
 
 核心满足两个
@@ -330,14 +321,6 @@ temp_id 需要保证唯一性，所以这里直接使用时间戳来实现
 * message_id 与待确认的消息 hset redis ：消息备份以重发
 * user_id 与 message 的离线消息 set redis ：离线消息推送  
 
-
-
-
-
-
-
-
-
 ### 总体流程
 
 发送消息客户端 Sclient ，服务端 Server ，接收消息客户端 Rclient
@@ -412,18 +395,6 @@ Rclient
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ## 群聊消息设计
 
 项目中使用扩散存
@@ -451,17 +422,13 @@ Rclient
 
 
 
-
-
-
-
 ## 会话列表
 
 会话列表中存在群聊或者用户，当有新消息时候该会话就会爬升到最上面。
 
 **后端**
 
-用 redis 的 zset 来存储每个用户的会话列表，某个会话（某个用户的联系人/群聊）有发送消息或者收到消息时候将其 score 变为最大值
+用 redis 的 zset 来存储每个用户的会话列表，某个会话（某个用户的联系人/群聊）有发送消息或者收到消息时候将其 score 变为最大值（即获取当前的时间戳作为 score ）
 
 **前端**
 
@@ -471,11 +438,7 @@ notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如
 
 每切换 activeChat 时候就将对应的 notic_num 清空
 
-
-
 ## 部分未实现
-
-* 时间块的显示，即如何设计
 
 * websokcet 连接验证身份
 
@@ -510,8 +473,6 @@ notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如
 
 如果存在则返回数据，如果不存在则注册并返回数据
 
-
-
 ### 加好友/群逻辑
 
 出现浮层，搜索名字出现列表
@@ -519,8 +480,6 @@ notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如
 ### 时间显示
 
 当前这条消息如果距离上一条消息的时间差超过2分钟就显示，
-
-
 
 ## 收到 IM 消息
 

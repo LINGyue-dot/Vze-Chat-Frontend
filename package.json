@@ -19,7 +19,8 @@
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
     "wangeditor": "^4.7.9",
-    "webrtc-adapter": "^8.1.0"
+    "webrtc-adapter": "^8.1.0",
+    "xss": "^1.0.10"
   },
   "devDependencies": {
     "@types/node": "^16.11.7",
