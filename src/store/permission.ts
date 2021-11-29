@@ -63,11 +63,16 @@ const permissionStore: PermissionStoreType = {
   actions: {
     login({ commit }, name: string) {
       return login(name).then((res: ResponseProp<any>) => {
-        commit("changeLogin", true);
-        commit("changeUserName", name);
-        commit("changeUserId", res.data.user_id);
-        commit("changeUserImg", res.data.user_img);
-        return res;
+        const { code } = res;
+        if (code == 200) {
+          commit("changeLogin", true);
+          commit("changeUserName", name);
+          commit("changeUserId", res.data.user_id);
+          commit("changeUserImg", res.data.user_img);
+          return res;
+        } else {
+          throw new Error("login fail");
+        }
       });
     },
   },

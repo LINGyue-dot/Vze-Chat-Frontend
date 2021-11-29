@@ -6,7 +6,7 @@
     </template>
     <a-input-search
       v-model:value="value"
-      placeholder="模糊搜索"
+      placeholder="试试搜索 ”测试“（mysql 模糊搜索）"
       @search="search"
     />
     <a-list
