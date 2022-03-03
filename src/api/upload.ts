@@ -1,3 +1,10 @@
+/*
+ * @Author: qianlong github:https://github.com/LINGyue-dot
+ * @Date: 2021-11-26 10:12:17
+ * @LastEditors: qianlong github:https://github.com/LINGyue-dot
+ * @LastEditTime: 2022-03-03 19:24:24
+ * @Description: 
+ */
 import axios, { AxiosRequestHeaders } from "axios";
 import { UPLOAD_API } from "@/api/config";
 import { http } from "@/api/http";
