@@ -53,8 +53,8 @@ const HistoryStore: HistoryStoreType = {
   actions: {
     initP2PHistory({ state }, payload) {},
     initBlockHistory({ state }) {},
-    addP2PHistory(
-      { state, rootState },
+    async addP2PHistory(
+      { state, rootState, dispatch },
       payload: P2PMessageProp | SendP2PMessageProp
     ) {
       // 如果是用户自己发送的消息，直接 push
@@ -76,23 +76,50 @@ const HistoryStore: HistoryStoreType = {
         // 需要选择插入的位置
         const temp = state.p2pHistory.get(payload.from_user_id);
         insertHistory<P2PMessageProp>(temp as [], payload as P2PMessageProp);
-        //  调整未读消息数目
-        //  通知数目调整
-        // 如果是 active 则不操作
+        // 如果该消息是新用户的消息
+        // 添加到 conversation 中
+
         if (
-          // @ts-ignore
-          !rootState.active.activeChat ||
-          // @ts-ignore
-          (rootState.active.activeChat &&
-            // @ts-ignore
-            rootState.active.activeChat?.user_id != payload.from_user_id)
-        ) {
-          console.log(payload.from_user_id, typeof payload.from_user_id);
-          // 如果不是 active 的就未读数目数目++
-          state.p2pNotice.set(
+          !(await dispatch(
+            "conversation/isInConversation",
             payload.from_user_id,
-            (state.p2pNotice.get(payload.from_user_id) || 0) + 1
+            {
+              root: true,
+            }
+          ))
+        ) {
+          console.log("is not in conversation");
+          dispatch(
+            "conversation/topConversation",
+            {
+              user: {
+                user_id: payload.from_user_id,
+                conversation_id: `c_${payload.from_user_id}`,
+              },
+            },
+            { root: true }
           );
+        }
+        // @ts-ignore
+        if (rootState.conversation.conversationList) {
+          if (
+            // @ts-ignore
+            !rootState.active.activeChat ||
+            // @ts-ignore
+            (rootState.active.activeChat &&
+              // @ts-ignore
+              rootState.active.activeChat?.user_id != payload.from_user_id)
+          ) {
+            //  调整未读消息数目
+            //  通知数目调整
+            // 如果是 active 则不操作
+            console.log(payload.from_user_id, typeof payload.from_user_id);
+            // 如果不是 active 的就未读数目数目++
+            state.p2pNotice.set(
+              payload.from_user_id,
+              (state.p2pNotice.get(payload.from_user_id) || 0) + 1
+            );
+          }
         }
       }
     },

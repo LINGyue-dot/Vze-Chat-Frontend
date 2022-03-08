@@ -32,8 +32,9 @@ const store = useStore<{ conversation: ConversationStateType }>()
 const activeStore = useStore<{ active: ActiveStateProp }>()
 const informationStore = useStore<{ information: InformationStateType }>()
 
-onMounted(()=>{
-console.log(store.state.conversation.conversationList)})
+onMounted(() => {
+  console.log(store.state.conversation.conversationList)
+})
 
 </script>
 <style scoped>

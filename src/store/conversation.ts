@@ -28,6 +28,7 @@ export interface ConversationStoreType
   actions: {
     getConversation: Action<ConversationStateType, ConversationStateType>;
     topConversation: Action<ConversationStateType, ConversationStateType>;
+    isInConversation: Action<ConversationStateType, ConversationStateType>;
   };
 }
 
@@ -84,6 +85,18 @@ const ConversationStore: ConversationStoreType = {
       console.log(temp);
       list.unshift(temp);
       return temp;
+    },
+    async isInConversation({ state }, from_user_id) {
+      const temp_c_id = `c_${from_user_id}`;
+      let isExit = false;
+      console.log(state.conversationList, temp_c_id);
+      state.conversationList.forEach((conversation) => {
+        if (conversation.conversation_id == temp_c_id) {
+          console.log(conversation.conversation_id, temp_c_id);
+          isExit = true;
+        }
+      });
+      return isExit;
     },
   },
 };
