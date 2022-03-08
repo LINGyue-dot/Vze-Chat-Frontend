@@ -10,5 +10,5 @@ export const UPLOAD_API = "http://175.24.185.110:5200";
 // process.env.VUE_APP_BASE_URL
 export const BASE_API = process.env.VUE_APP_BASE_URL as string;
 export const SOCKETIO_API = process.env.VUE_APP_BASE_URL as string;
-export const WS_API = process.env.VUE_APP_BASE_URL as string;
+export const WS_API = process.env.VUE_APP_WS_URL as string;
 //
