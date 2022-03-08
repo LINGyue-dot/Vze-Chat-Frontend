@@ -26,6 +26,7 @@ export interface PermissionStoreType
   };
   actions: {
     login: Action<PermissionStateType, PermissionStateType>;
+    logout: Action<PermissionStateType, PermissionStateType>;
   };
 }
 
@@ -74,6 +75,13 @@ const permissionStore: PermissionStoreType = {
           throw new Error("login fail");
         }
       });
+    },
+    async logout({ commit }) {
+      commit("changeLogin", false);
+      commit("changeUserName", null);
+      commit("changeUserId", null);
+      commit("changeUserImg", null);
+      return "";
     },
   },
 };
