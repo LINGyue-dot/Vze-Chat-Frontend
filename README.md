@@ -118,7 +118,7 @@ ICE 候选人：（优先级从上到下）
 
 如下图：就是  Amy 发送 offer Bob 返回 Answer
 
-<img src="http://120.27.242.14:9900/uploads/upload_21df5c5daf80118353f56251c2c19241.png" alt="image-20211101180601769" style="zoom:67%;" />
+<img src="https://typora-1300781048.cos.ap-beijing.myqcloud.com/img/upload_21df5c5daf80118353f56251c2c19241.png" alt="image-20211101180601769" style="zoom:67%;" />
 
 
 
@@ -189,7 +189,7 @@ navigator.mediaDevices
 
 
 
-![6cb372db929540878425bc8026e102b0_tplv-k3u1fbpfcp-watermark](http://120.27.242.14:9900/uploads/upload_fefbe031b05c6bdbcaa38adf96f904c7.png)
+![6cb372db929540878425bc8026e102b0_tplv-k3u1fbpfcp-watermark](https://typora-1300781048.cos.ap-beijing.myqcloud.com/img/upload_fefbe031b05c6bdbcaa38adf96f904c7.png)
 
 ## 几个主要的 api
 
@@ -446,7 +446,7 @@ notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如
 
 * udp 和 tcp
 
-  ![image-20211114153543200](http://120.27.242.14:9900/uploads/upload_b9ed7af0e4372c9339fe096781a8219e.png)
+  ![image-20211114153543200](https://typora-1300781048.cos.ap-beijing.myqcloud.com/img/upload_b9ed7af0e4372c9339fe096781a8219e.png)
 
   
 
@@ -465,7 +465,7 @@ notice_num 在收到用户消息时候自动将 activeChat 的数目清空，如
 
 ## UI
 
-![image-20211117161907323](http://120.27.242.14:9900/uploads/upload_7aed76fb39fe2d7786d5613bf2fe77e4.png)
+![image-20211117161907323](https://typora-1300781048.cos.ap-beijing.myqcloud.com/img/upload_7aed76fb39fe2d7786d5613bf2fe77e4.png)
 
 
 
